@@ -55,6 +55,19 @@ const products = [
 export const ProductShowcase = () => {
   const navigate = useNavigate();
   
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleViewCollection = () => {
+    navigate('/shop');
+    // Scroll to top after navigation
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <section id="products" className="py-20 bg-gradient-to-b from-black to-gray-900">
       <div className="container mx-auto px-6">
@@ -114,7 +127,7 @@ export const ProductShowcase = () => {
 
         <div className="text-center mt-16">
           <button 
-            onClick={() => navigate('/shop')}
+            onClick={handleViewCollection}
             className="bg-gradient-to-r from-gold-500 to-gold-600 text-black px-8 py-4 text-lg font-semibold 
                      hover:from-gold-400 hover:to-gold-500 transition-all duration-300 transform hover:scale-105
                      relative overflow-hidden group"
