@@ -52,6 +52,15 @@ export const Navigation = () => {
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gold-400 transition-all duration-300 group-hover:w-full"></span>
             </button>
             <button 
+              onClick={() => {scrollToSection('login-page')
+                navigate('/login')
+              }}
+              className="text-white hover:text-gold-400 transition-colors duration-300 relative group"
+            >
+              Login
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gold-400 transition-all duration-300 group-hover:w-full"></span>
+            </button>
+            <button 
               onClick={() => scrollToSection('products')}
               className="text-white hover:text-gold-400 transition-colors duration-300 relative group"
             >
@@ -107,6 +116,17 @@ export const Navigation = () => {
               >
                 Home
               </button>
+              
+              <button 
+                onClick={() =>{ navigate('/login')
+                scrollToSection('login-page')
+
+                }}
+                className="text-white hover:text-gold-400 transition-colors duration-300 text-left"
+              >
+                Login
+              </button>
+              
               <button 
                 onClick={() => scrollToSection('products')}
                 className="text-white hover:text-gold-400 transition-colors duration-300 text-left"

@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const products = [
   {
@@ -53,6 +54,8 @@ const products = [
 ];
 
 export const ProductShowcase = () => {
+
+  const navigate = useNavigate();
   return (
     <section id="products" className="py-20 bg-gradient-to-b from-black to-gray-900">
       <div className="container mx-auto px-6">
@@ -111,7 +114,7 @@ export const ProductShowcase = () => {
         </div>
 
         <div className="text-center mt-16">
-          <button className="bg-gradient-to-r from-gold-500 to-gold-600 text-black px-8 py-4 text-lg font-semibold 
+          <button onClick={() => navigate('/shop')} className="bg-gradient-to-r from-gold-500 to-gold-600 text-black px-8 py-4 text-lg font-semibold 
                            hover:from-gold-400 hover:to-gold-500 transition-all duration-300 transform hover:scale-105
                            relative overflow-hidden group">
             <span className="relative z-10">View Full Collection</span>
