@@ -1,7 +1,7 @@
-
 import React, { useState } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { ArrowRight } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const products = [
   {
@@ -105,6 +105,7 @@ const products = [
 const Shop = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [sortBy, setSortBy] = useState('name');
+  const { toast } = useToast();
 
   const categories = ['All', 'Men', 'Women', 'Unisex'];
 
@@ -118,6 +119,15 @@ const Shop = () => {
     }
     return a.name.localeCompare(b.name);
   });
+
+  const handleAddToCart = (product: typeof products[0]) => {
+    if (!product.inStock) return;
+    
+    toast({
+      title: "Added to Cart",
+      description: `${product.name} has been added to your cart.`,
+    });
+  };
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -137,13 +147,13 @@ const Shop = () => {
           </div>
 
           {/* Filters */}
-          <div className="flex flex-col md:flex-row justify-between items-center mb-12 space-y-4 md:space-y-0">
-            <div className="flex space-x-4">
+          <div className="flex flex-col md:flex-row justify-center items-center mb-12 space-y-4 md:space-y-0 md:space-x-8">
+            <div className="flex space-x-3">
               {categories.map((category) => (
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category)}
-                  className={`px-6 py-2 rounded-full transition-all duration-300 ${
+                  className={`px-4 py-2 text-sm rounded-full transition-all duration-300 ${
                     selectedCategory === category
                       ? 'bg-gold-500 text-black font-semibold'
                       : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
@@ -157,7 +167,7 @@ const Shop = () => {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="bg-gray-800 text-white px-4 py-2 rounded-lg border border-gold-600/20 focus:outline-none focus:border-gold-400"
+              className="bg-gray-800 text-white px-3 py-2 text-sm rounded-lg border border-gold-600/20 focus:outline-none focus:border-gold-400"
             >
               <option value="name">Sort by Name</option>
               <option value="price">Sort by Price</option>
@@ -219,6 +229,7 @@ const Shop = () => {
                   
                   <button 
                     disabled={!product.inStock}
+                    onClick={() => handleAddToCart(product)}
                     className={`w-full py-3 font-semibold transition-all duration-300 transform relative overflow-hidden group
                       ${product.inStock 
                         ? 'bg-transparent border-2 border-gold-500 text-gold-400 hover:bg-gold-500 hover:text-black hover:scale-105' 

@@ -72,7 +72,7 @@ export const Navigation = () => {
             </button>
             <button 
               onClick={handleShopNow}
-              className="bg-gradient-to-r from-gold-500 to-gold-600 text-black px-6 py-2 font-semibold 
+              className="bg-gradient-to-r from-gold-500 to-gold-600 text-black px-4 py-2 font-semibold text-sm
                        hover:from-gold-400 hover:to-gold-500 transition-all duration-300 transform hover:scale-105"
             >
               Shop Now
@@ -118,8 +118,8 @@ export const Navigation = () => {
               </button>
               <button 
                 onClick={handleShopNow}
-                className="bg-gradient-to-r from-gold-500 to-gold-600 text-black px-6 py-2 font-semibold 
-                         hover:from-gold-400 hover:to-gold-500 transition-all duration-300 text-left mt-2"
+                className="bg-gradient-to-r from-gold-500 to-gold-600 text-black px-4 py-2 font-semibold text-sm
+                         hover:from-gold-400 hover:to-gold-500 transition-all duration-300 text-left mt-2 w-fit"
               >
                 Shop Now
               </button>
