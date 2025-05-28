@@ -68,76 +68,44 @@ export const Navigation = () => {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden text-white relative z-50 p-2 rounded-lg hover:bg-gold-500/20 transition-colors duration-300"
+            className="md:hidden text-white"
             onClick={toggleMobileMenu}
           >
-            <div className="relative w-6 h-6">
-              <Menu 
-                size={24} 
-                className={`absolute transition-all duration-300 transform ${
-                  isMobileMenuOpen ? 'rotate-180 opacity-0 scale-75' : 'rotate-0 opacity-100 scale-100'
-                }`}
-              />
-              <X 
-                size={24} 
-                className={`absolute transition-all duration-300 transform ${
-                  isMobileMenuOpen ? 'rotate-0 opacity-100 scale-100' : 'rotate-180 opacity-0 scale-75'
-                }`}
-              />
-            </div>
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
 
-        {/* Mobile Menu Overlay */}
-        <div 
-          className={`fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
-            isMobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-          }`}
-          onClick={() => setIsMobileMenuOpen(false)}
-        />
-
         {/* Mobile Menu */}
-        <div className={`fixed top-0 right-0 h-full w-80 bg-gradient-to-b from-black to-gray-900 
-                        border-l border-gold-600/20 transform transition-transform duration-500 ease-in-out md:hidden ${
-          isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}>
-          <div className="flex flex-col pt-20 px-8 space-y-8">
-            <button 
-              onClick={() => scrollToSection('home')}
-              className="text-white hover:text-gold-400 transition-all duration-300 text-left text-xl
-                       transform hover:translate-x-2 hover:scale-105 py-3 border-b border-gold-600/20"
-            >
-              Home
-            </button>
-            <button 
-              onClick={() => scrollToSection('products')}
-              className="text-white hover:text-gold-400 transition-all duration-300 text-left text-xl
-                       transform hover:translate-x-2 hover:scale-105 py-3 border-b border-gold-600/20"
-            >
-              Products
-            </button>
-            <button 
-              onClick={() => scrollToSection('about')}
-              className="text-white hover:text-gold-400 transition-all duration-300 text-left text-xl
-                       transform hover:translate-x-2 hover:scale-105 py-3 border-b border-gold-600/20"
-            >
-              About
-            </button>
-            <button 
-              onClick={() => scrollToSection('contact')}
-              className="text-white hover:text-gold-400 transition-all duration-300 text-left text-xl
-                       transform hover:translate-x-2 hover:scale-105 py-3 border-b border-gold-600/20"
-            >
-              Contact
-            </button>
-            
-            {/* Mobile Menu Footer */}
-            <div className="pt-8 border-t border-gold-600/20">
-              <div className="text-gold-400 font-bold text-lg mb-2">MARQUEZ</div>
-              <p className="text-gray-400 text-sm">Luxury Fragrances</p>
+        {isMobileMenuOpen && (
+          <div className="md:hidden mt-4 pb-4 border-t border-gold-600/20">
+            <div className="flex flex-col space-y-4 pt-4">
+              <button 
+                onClick={() => scrollToSection('home')}
+                className="text-white hover:text-gold-400 transition-colors duration-300 text-left"
+              >
+                Home
+              </button>
+              <button 
+                onClick={() => scrollToSection('products')}
+                className="text-white hover:text-gold-400 transition-colors duration-300 text-left"
+              >
+                Products
+              </button>
+              <button 
+                onClick={() => scrollToSection('about')}
+                className="text-white hover:text-gold-400 transition-colors duration-300 text-left"
+              >
+                About
+              </button>
+              <button 
+                onClick={() => scrollToSection('contact')}
+                className="text-white hover:text-gold-400 transition-colors duration-300 text-left"
+              >
+                Contact
+              </button>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </nav>
   );
