@@ -1,7 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { CartDropdown } from './CartDropdown';
 
 export const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -43,7 +43,9 @@ export const Navigation = () => {
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
             <button 
-              onClick={() => scrollToSection('home')}
+              onClick={() => {scrollToSection('home')
+                navigate('/')
+              }}
               className="text-white hover:text-gold-400 transition-colors duration-300 relative group"
             >
               Home
@@ -77,15 +79,19 @@ export const Navigation = () => {
             >
               Shop Now
             </button>
+            <CartDropdown />
           </div>
 
           {/* Mobile Menu Button */}
-          <button
-            className="md:hidden text-white"
-            onClick={toggleMobileMenu}
-          >
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          <div className="md:hidden flex items-center space-x-4">
+            <CartDropdown />
+            <button
+              className="text-white"
+              onClick={toggleMobileMenu}
+            >
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu */}
@@ -93,7 +99,10 @@ export const Navigation = () => {
           <div className="md:hidden mt-4 pb-4 border-t border-gold-600/20">
             <div className="flex flex-col space-y-4 pt-4">
               <button 
-                onClick={() => scrollToSection('home')}
+                onClick={() =>{ navigate('/')
+                scrollToSection('home')
+
+                }}
                 className="text-white hover:text-gold-400 transition-colors duration-300 text-left"
               >
                 Home

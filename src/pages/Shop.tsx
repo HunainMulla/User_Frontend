@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Navigation } from '@/components/Navigation';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Search } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useCart } from '@/contexts/CartContext';
 
 const products = [
   {
@@ -105,13 +106,22 @@ const products = [
 const Shop = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [sortBy, setSortBy] = useState('name');
+  const [searchQuery, setSearchQuery] = useState('');
   const { toast } = useToast();
+  const { addItem } = useCart();
 
   const categories = ['All', 'Men', 'Women', 'Unisex'];
 
-  const filteredProducts = products.filter(product => 
-    selectedCategory === 'All' || product.category === selectedCategory
-  );
+  const filteredProducts = products.filter(product => {
+    const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory;
+    const searchLower = searchQuery.toLowerCase();
+    const matchesSearch = searchQuery === '' || 
+      product.name.toLowerCase().includes(searchLower) ||
+      product.description.toLowerCase().includes(searchLower) ||
+      product.notes.some(note => note.toLowerCase().includes(searchLower));
+    
+    return matchesCategory && matchesSearch;
+  });
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     if (sortBy === 'price') {
@@ -122,6 +132,13 @@ const Shop = () => {
 
   const handleAddToCart = (product: typeof products[0]) => {
     if (!product.inStock) return;
+    
+    addItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+    });
     
     toast({
       title: "Added to Cart",
@@ -146,32 +163,61 @@ const Shop = () => {
             </p>
           </div>
 
-          {/* Filters */}
-          <div className="flex flex-col md:flex-row justify-center items-center mb-12 space-y-4 md:space-y-0 md:space-x-8">
-            <div className="flex space-x-3">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => setSelectedCategory(category)}
-                  className={`px-4 py-2 text-sm rounded-full transition-all duration-300 ${
-                    selectedCategory === category
-                      ? 'bg-gold-500 text-black font-semibold'
-                      : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
+          {/* Search and Filters */}
+          <div className="flex flex-col space-y-6 mb-12">
+            {/* Search Bar */}
+            <div className="max-w-md mx-auto w-full">
+              <div className="relative">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search by name, description, or notes..."
+                  className="w-full bg-gray-900/50 border border-gold-600/20 rounded-lg px-4 py-3 pl-12
+                           text-white placeholder-gray-400 focus:outline-none focus:border-gold-400
+                           transition-all duration-300"
+                />
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+              </div>
             </div>
-            
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="bg-gray-800 text-white px-3 py-2 text-sm rounded-lg border border-gold-600/20 focus:outline-none focus:border-gold-400"
-            >
-              <option value="name">Sort by Name</option>
-              <option value="price">Sort by Price</option>
-            </select>
+
+            {/* Filters */}
+            <div className="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-8">
+              <div className="flex space-x-3">
+                {categories.map((category) => (
+                  <button
+                    key={category}
+                    onClick={() => setSelectedCategory(category)}
+                    className={`px-4 py-2 text-sm rounded-full transition-all duration-300 ${
+                      selectedCategory === category
+                        ? 'bg-gold-500 text-black font-semibold'
+                        : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                    }`}
+                  >
+                    {category}
+                  </button>
+                ))}
+              </div>
+              
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="bg-gray-800 text-white px-3 py-2 text-sm rounded-lg border border-gold-600/20 
+                         focus:outline-none focus:border-gold-400"
+              >
+                <option value="name">Sort by Name</option>
+                <option value="price">Sort by Price</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Results Count */}
+          <div className="text-center mb-8">
+            <p className="text-gray-400">
+              {sortedProducts.length === 0 
+                ? 'No products found' 
+                : `Showing ${sortedProducts.length} product${sortedProducts.length === 1 ? '' : 's'}`}
+            </p>
           </div>
 
           {/* Products Grid */}
