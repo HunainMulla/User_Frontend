@@ -50,16 +50,16 @@ const Signup = () => {
     <div className="min-h-screen bg-black text-white flex flex-col">
       <Navigation />
       
-      <div className="flex-1 flex items-center justify-center px-4 md:px-6 py-12 md:pt-24">
+      <div className="flex-1 flex items-center justify-center px-4 md:px-6 py-6 md:py-12 md:pt-24">
         <div className="w-full max-w-md animate-fade-in">
-          <div className="bg-gray-900/50 backdrop-blur-md border border-gold-600/20 rounded-lg p-6
+          <div className="bg-gray-900/50 backdrop-blur-md border border-gold-600/20 rounded-lg p-4 md:p-6
                         shadow-xl">
-            <div className="text-center mb-6">
-              <h1 className="text-3xl font-bold text-gold-400 mb-1">Create Account</h1>
-              <p className="text-gray-400">Join the Marquez luxury experience</p>
+            <div className="text-center mb-4 md:mb-6">
+              <h1 className="text-2xl md:text-3xl font-bold text-gold-400 mb-1">Create Account</h1>
+              <p className="text-sm md:text-base text-gray-400">Join the Marquez luxury experience</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
               <div className="space-y-1">
                 <label htmlFor="fullName" className="block text-sm font-medium text-gray-300">
                   Full Name

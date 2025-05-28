@@ -25,20 +25,20 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white flex flex-col">
       <Navigation />
       
-      <div className="container mx-auto px-4 pt-32 pb-16">
-        <div className="max-w-md mx-auto">
-          <div className="bg-gray-900/50 backdrop-blur-md border border-gold-600/20 rounded-lg p-8
-                        shadow-xl animate-fade-in">
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-gold-400 mb-2">Welcome Back</h1>
-              <p className="text-gray-400">Sign in to your Marquez account</p>
+      <div className="flex-1 flex items-center justify-center px-4 md:px-6 py-6 md:py-12 md:pt-24">
+        <div className="w-full max-w-md animate-fade-in">
+          <div className="bg-gray-900/50 backdrop-blur-md border border-gold-600/20 rounded-lg p-4 md:p-6
+                        shadow-xl">
+            <div className="text-center mb-4 md:mb-6">
+              <h1 className="text-2xl md:text-3xl font-bold text-gold-400 mb-1">Welcome Back</h1>
+              <p className="text-sm md:text-base text-gray-400">Sign in to your Marquez account</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-2">
+            <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
+              <div className="space-y-1">
                 <label htmlFor="email" className="block text-sm font-medium text-gray-300">
                   Email
                 </label>
@@ -48,7 +48,7 @@ const Login = () => {
                     id="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-gray-800/50 border border-gold-600/20 rounded-lg px-4 py-3 pl-12
+                    className="w-full bg-gray-800/50 border border-gold-600/20 rounded-lg px-4 py-2 pl-12
                              text-white placeholder-gray-400 focus:outline-none focus:border-gold-400
                              transition-all duration-300"
                     placeholder="Enter your email"
@@ -58,7 +58,7 @@ const Login = () => {
                 </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <label htmlFor="password" className="block text-sm font-medium text-gray-300">
                   Password
                 </label>
@@ -68,7 +68,7 @@ const Login = () => {
                     id="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-gray-800/50 border border-gold-600/20 rounded-lg px-4 py-3 pl-12
+                    className="w-full bg-gray-800/50 border border-gold-600/20 rounded-lg px-4 py-2 pl-12
                              text-white placeholder-gray-400 focus:outline-none focus:border-gold-400
                              transition-all duration-300"
                     placeholder="Enter your password"
@@ -102,14 +102,14 @@ const Login = () => {
 
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-gold-500 to-gold-600 text-black py-3 px-4 rounded-lg
+                className="w-full bg-gradient-to-r from-gold-500 to-gold-600 text-black py-2.5 px-4 rounded-lg
                          font-semibold hover:from-gold-400 hover:to-gold-500 transition-all duration-300
-                         transform hover:scale-105"
+                         transform hover:scale-105 mt-2 md:mt-4"
               >
                 Sign In
               </button>
 
-              <div className="relative my-6">
+              <div className="relative my-4">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-700"></div>
                 </div>
@@ -118,7 +118,7 @@ const Login = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
                   className="flex items-center justify-center px-4 py-2 border border-gold-600/20
@@ -137,7 +137,7 @@ const Login = () => {
                 </button>
               </div>
 
-              <p className="text-center text-gray-400 text-sm">
+              <p className="text-center text-gray-400 text-sm mt-4">
                 Don't have an account?{' '}
                 <Link
                   to="/signup"
