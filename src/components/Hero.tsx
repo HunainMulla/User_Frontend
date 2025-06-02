@@ -57,7 +57,7 @@ export const Hero = () => {
           />
         </div>
         
-        <h1 className="text-6xl md:text-8xl font-bold mb-6 animate-fade-in">
+        <h1 className="text-6xl md:text-8xl font-bold mb-3 animate-fade-in">
           <span className="bg-gradient-to-r from-gold-300 via-gold-400 to-gold-600 bg-clip-text text-transparent">
             MARQUEZ
           </span>

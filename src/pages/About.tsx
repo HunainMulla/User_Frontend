@@ -51,10 +51,10 @@ const About = () => {
 
   const team = [
     {
-      name: "Elena Marquez",
+      name: "Sakib Shaikh",
       role: "Master Perfumer",
       image: "👩‍🔬",
-      description: "With over 20 years of experience, Elena leads our fragrance creation with unmatched expertise."
+      description: "With over 20 years of experience, Sakib leads our fragrance creation with unmatched expertise."
     },
     {
       name: "Alessandro Torres",
@@ -121,7 +121,7 @@ const About = () => {
               <p className="text-gray-400 italic">
                 "Fragrance is the key to our memories, the bridge to our emotions"
               </p>
-              <p className="text-gold-400 font-semibold mt-2">- Elena Marquez, Master Perfumer</p>
+              <p className="text-gold-400 font-semibold mt-2">- Sakib Shaikh, Master Perfumer</p>
             </div>
           </div>
 
