@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Lock } from 'lucide-react';
+import { createApiUrl } from '@/config/api';
 
 interface CheckoutFormProps {
   cartItems: any[];
@@ -75,7 +76,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ cartItems, orderSumm
   const confirmPaymentWithBackend = async (paymentIntentId: string) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3000/api/payment/confirm-payment', {
+      const response = await fetch(createApiUrl('api/payment/confirm-payment'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

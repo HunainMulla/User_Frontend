@@ -15,6 +15,7 @@ import {
   Clock,
   RefreshCw
 } from 'lucide-react';
+import { createApiUrl } from '@/config/api';
 
 interface OrderItem {
   id: number;
@@ -80,7 +81,7 @@ const Orders = () => {
   const fetchOrders = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3000/api/orders/my-orders', {
+      const response = await fetch(createApiUrl('api/orders/my-orders'), {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -115,7 +116,7 @@ const Orders = () => {
     setAutoUpdating(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3000/api/orders/my-orders', {
+      const response = await fetch(createApiUrl('api/orders/my-orders'), {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -186,7 +187,7 @@ const Orders = () => {
   const fetchStats = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3000/api/orders/stats', {
+      const response = await fetch(createApiUrl('api/orders/stats'), {
         headers: {
           'Authorization': `Bearer ${token}`,
         },

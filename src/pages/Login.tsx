@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useDispatch,useSelector } from 'react-redux';
 import {loginUser,logout} from '@/slice/loginSlice'
 import { useAdmin } from '@/contexts/AdminContext';
+import { createApiUrl } from '@/config/api';
 
 const Login = () => {
   const [email, setEmail] = useState<string>("");
@@ -59,7 +60,7 @@ const Login = () => {
   const handleLogin = (e: React.FormEvent): void => {
     e.preventDefault();
     
-    fetch("http://localhost:3000/auth/login", { 
+    fetch(createApiUrl("auth/login"), { 
         method: "POST",
         headers: {
             'Content-Type': 'application/json',

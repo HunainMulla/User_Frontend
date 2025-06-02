@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useAdmin } from '@/contexts/AdminContext';
 import { useToast } from '@/hooks/use-toast';
+import { createApiUrl } from '@/config/api';
 
 interface OrderItem {
   id: number;
@@ -100,7 +101,7 @@ const UserOrders = () => {
         return;
       }
 
-      const response = await fetch('http://localhost:3000/api/orders/admin/all-orders', {
+      const response = await fetch(createApiUrl('api/orders/admin/all-orders'), {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -139,7 +140,7 @@ const UserOrders = () => {
   const fetchStats = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3000/api/orders/admin/stats', {
+      const response = await fetch(createApiUrl('api/orders/admin/stats'), {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -171,7 +172,7 @@ const UserOrders = () => {
       }
 
       console.log('Sending PUT request to update order status...');
-      const response = await fetch(`http://localhost:3000/api/orders/admin/update-status/${orderId}`, {
+      const response = await fetch(createApiUrl(`api/orders/admin/update-status/${orderId}`), {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,

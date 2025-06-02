@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
 import { Mail, Lock, Eye, EyeOff, User } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { createApiUrl } from '@/config/api';
 
 const Signup = () => {
 
@@ -62,7 +63,7 @@ const Signup = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/auth/register", { 
+      const response = await fetch(createApiUrl("auth/register"), { 
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

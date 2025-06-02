@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { ArrowLeft, Package, Truck, CreditCard } from 'lucide-react';
 import stripePromise from '@/lib/stripe';
+import { createApiUrl } from '@/config/api';
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -44,7 +45,7 @@ const Checkout = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3000/api/payment/create-payment-intent', {
+      const response = await fetch(createApiUrl('api/payment/create-payment-intent'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

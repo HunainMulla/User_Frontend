@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createApiUrl } from '@/config/api';
 
 interface AdminContextType {
   isAdmin: boolean;
@@ -30,7 +31,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         return false;
       }
 
-      const response = await fetch('http://localhost:3000/api/orders/admin/verify', {
+      const response = await fetch(createApiUrl('api/orders/admin/verify'), {
         headers: {
           'Authorization': `Bearer ${token}`,
         },

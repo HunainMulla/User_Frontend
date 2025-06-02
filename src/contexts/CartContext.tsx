@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { createApiUrl } from '@/config/api';
 
 interface CartItem {
   id: number;
@@ -113,7 +114,7 @@ const getAuthToken = () => localStorage.getItem('token');
 
 const apiCall = async (url: string, options: RequestInit = {}) => {
   const token = getAuthToken();
-  const response = await fetch(`http://localhost:3000/api/cart${url}`, {
+  const response = await fetch(createApiUrl(`api/cart${url}`), {
     ...options,
     headers: {
       'Content-Type': 'application/json',
