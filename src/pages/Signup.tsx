@@ -5,6 +5,8 @@ import { Mail, Lock, Eye, EyeOff, User } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const Signup = () => {
+
+    const [token,setToken]=useState<string>('');
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -46,6 +48,74 @@ const Signup = () => {
     navigate('/login');
   };
 
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (formData.password !== formData.confirmPassword) {
+      toast({
+        title: "Error",
+        description: "Passwords do not match",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:3000/auth/register", { 
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          email: formData.email,
+          password: formData.password
+        })
+      });
+
+      const data = await response.json();
+      console.log('Registration response:', data);
+      
+      if (response.ok) {
+        // Check if token exists in the response
+        const token = data.token || (data.user && data.user.token);
+        
+        if (token) {
+          setToken(token);
+          toast({
+            title: "Success",
+            description: `Account created successfully!`,
+          });
+          // Redirect to login or dashboard
+          navigate('/login');
+        } else {
+          console.error('No token found in response:', data);
+          toast({
+            title: "Error",
+            description: "Registration successful but no token received",
+            variant: "destructive",
+          });
+        }
+      } else {
+        // Handle server errors
+        console.error('Registration failed:', data);
+        toast({
+          title: "Error",
+          description: data.message || "Registration failed. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      toast({
+        title: "Error",
+        description: "An error occurred during registration",
+        variant: "destructive",
+      });
+    }
+  };
+
+
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
       <Navigation />
@@ -59,7 +129,7 @@ const Signup = () => {
               <p className="text-sm md:text-base text-gray-400">Join the Marquez luxury experience</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
+            <form onSubmit={handleRegister} className="space-y-3 md:space-y-4">
               <div className="space-y-1">
                 <label htmlFor="fullName" className="block text-sm font-medium text-gray-300">
                   Full Name
@@ -169,7 +239,7 @@ const Signup = () => {
                 Create Account
               </button>
 
-              <div className="relative my-4">
+              {/* <div className="relative my-4">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-700"></div>
                 </div>
@@ -195,7 +265,7 @@ const Signup = () => {
                   <img src="/facebook.svg" alt="Facebook" className="w-5 h-5 mr-2" />
                   Facebook
                 </button>
-              </div>
+              </div> */}
 
               <p className="text-center text-gray-400 text-sm mt-4">
                 Already have an account?{' '}

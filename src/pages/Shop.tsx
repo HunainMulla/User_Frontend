@@ -1,116 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navigation } from '@/components/Navigation';
-import { ArrowRight, Search } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
+import { useProducts } from '@/contexts/ProductContext';
 import { useCart } from '@/contexts/CartContext';
-
-const products = [
-  {
-    id: 1,
-    name: "Marquez Noir",
-    description: "A bold and mysterious fragrance with notes of bergamot, black pepper, and sandalwood. Perfect for evening wear and special occasions.",
-    price: "$120",
-    originalPrice: "$150",
-    image: "🖤",
-    category: "Unisex",
-    size: "100ml",
-    notes: ["Bergamot", "Black Pepper", "Sandalwood"],
-    inStock: true
-  },
-  {
-    id: 2,
-    name: "Golden Essence",
-    description: "An elegant blend of jasmine, vanilla, and amber that captures pure luxury and sophistication.",
-    price: "$150",
-    originalPrice: "$180",
-    image: "✨",
-    category: "Women",
-    size: "100ml",
-    notes: ["Jasmine", "Vanilla", "Amber"],
-    inStock: true
-  },
-  {
-    id: 3,
-    name: "Royal Velvet",
-    description: "A sophisticated scent featuring rose petals, patchouli, and cedar wood for the modern woman.",
-    price: "$135",
-    originalPrice: "$160",
-    image: "👑",
-    category: "Women",
-    size: "100ml",
-    notes: ["Rose Petals", "Patchouli", "Cedar Wood"],
-    inStock: true
-  },
-  {
-    id: 4,
-    name: "Midnight Oud",
-    description: "Deep and intoxicating with oud, leather, and smoky incense notes. A masterpiece for the connoisseur.",
-    price: "$180",
-    originalPrice: "$220",
-    image: "🌙",
-    category: "Men",
-    size: "100ml",
-    notes: ["Oud", "Leather", "Smoky Incense"],
-    inStock: true
-  },
-  {
-    id: 5,
-    name: "Citrus Gold",
-    description: "Fresh and vibrant with bergamot, lemon, and golden amber finish. Perfect for daily wear.",
-    price: "$110",
-    originalPrice: "$130",
-    image: "🍊",
-    category: "Unisex",
-    size: "100ml",
-    notes: ["Bergamot", "Lemon", "Golden Amber"],
-    inStock: true
-  },
-  {
-    id: 6,
-    name: "Imperial Rose",
-    description: "Luxurious and romantic with Bulgarian rose, musk, and white tea. An enchanting feminine fragrance.",
-    price: "$165",
-    originalPrice: "$190",
-    image: "🌹",
-    category: "Women",
-    size: "100ml",
-    notes: ["Bulgarian Rose", "Musk", "White Tea"],
-    inStock: false
-  },
-  {
-    id: 7,
-    name: "Ocean Breeze",
-    description: "Fresh aquatic scent with sea salt, mint, and driftwood. Captures the essence of coastal luxury.",
-    price: "$125",
-    originalPrice: "$155",
-    image: "🌊",
-    category: "Unisex",
-    size: "100ml",
-    notes: ["Sea Salt", "Mint", "Driftwood"],
-    inStock: true
-  },
-  {
-    id: 8,
-    name: "Spice Emperor",
-    description: "Bold and commanding with cardamom, cinnamon, and tobacco leaf. For the distinguished gentleman.",
-    price: "$155",
-    originalPrice: "$185",
-    image: "🔥",
-    category: "Men",
-    size: "100ml",
-    notes: ["Cardamom", "Cinnamon", "Tobacco Leaf"],
-    inStock: true
-  }
-];
+import { useToast } from '@/hooks/use-toast';
+import { useSelector } from 'react-redux';
+import { ArrowRight, Search, Star } from 'lucide-react';
 
 const Shop = () => {
+  const navigate = useNavigate();
+  const { products } = useProducts();
+  const { addItem } = useCart();
+  const { toast } = useToast();
+  const isLoggedIn = useSelector((state: any) => state.login.value);
+  
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [sortBy, setSortBy] = useState('name');
   const [searchQuery, setSearchQuery] = useState('');
-  const { toast } = useToast();
-  const { addItem } = useCart();
 
-  const categories = ['All', 'Men', 'Women', 'Unisex'];
+  const categories = ['All', ...Array.from(new Set(products.map(p => p.category)))];
 
   const filteredProducts = products.filter(product => {
     const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory;
@@ -127,11 +35,24 @@ const Shop = () => {
     if (sortBy === 'price') {
       return parseInt(a.price.slice(1)) - parseInt(b.price.slice(1));
     }
+    if (sortBy === 'rating') {
+      return (b.rating || 0) - (a.rating || 0);
+    }
     return a.name.localeCompare(b.name);
   });
 
   const handleAddToCart = (product: typeof products[0]) => {
     if (!product.inStock) return;
+    
+    if (!isLoggedIn) {
+      toast({
+        title: "Login Required",
+        description: "Please log in to add items to your cart.",
+        variant: "destructive",
+      });
+      navigate('/login');
+      return;
+    }
     
     addItem({
       id: product.id,
@@ -139,11 +60,36 @@ const Shop = () => {
       price: product.price,
       image: product.image,
     });
-    
+
     toast({
       title: "Added to Cart",
       description: `${product.name} has been added to your cart.`,
     });
+  };
+
+  const handleProductClick = (productId: number) => {
+    navigate(`/product/${productId}`);
+  };
+
+  const renderStars = (rating: number) => {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 !== 0;
+
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(<Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />);
+    }
+
+    if (hasHalfStar) {
+      stars.push(<Star key="half" className="w-4 h-4 fill-yellow-400/50 text-yellow-400" />);
+    }
+
+    const emptyStars = 5 - Math.ceil(rating);
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push(<Star key={`empty-${i}`} className="w-4 h-4 text-gray-400" />);
+    }
+
+    return stars;
   };
 
   return (
@@ -198,7 +144,7 @@ const Shop = () => {
                   </button>
                 ))}
               </div>
-              
+
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
@@ -207,6 +153,7 @@ const Shop = () => {
               >
                 <option value="name">Sort by Name</option>
                 <option value="price">Sort by Price</option>
+                <option value="rating">Sort by Rating</option>
               </select>
             </div>
           </div>
@@ -227,8 +174,9 @@ const Shop = () => {
                 key={product.id}
                 className="group bg-gray-900/50 backdrop-blur-sm border border-gold-600/20 rounded-lg overflow-hidden
                          hover:border-gold-400/50 transition-all duration-500 transform hover:scale-105
-                         hover:shadow-2xl hover:shadow-gold-500/20 animate-slide-up"
+                         hover:shadow-2xl hover:shadow-gold-500/20 animate-slide-up cursor-pointer"
                 style={{animationDelay: `${index * 0.1}s`}}
+                onClick={() => handleProductClick(product.id)}
               >
                 <div className="p-6">
                   <div className="text-center mb-4">
@@ -243,39 +191,56 @@ const Shop = () => {
                       <span className="text-gray-400 text-sm">{product.size}</span>
                     </div>
                   </div>
-                  
+
                   <h3 className="text-xl font-bold text-gold-300 mb-3 group-hover:text-gold-200 transition-colors">
                     {product.name}
                   </h3>
-                  
+
+                  {/* Rating */}
+                  {product.rating && product.rating > 0 && (
+                    <div className="flex items-center justify-center mb-3">
+                      <div className="flex items-center mr-2">
+                        {renderStars(product.rating)}
+                      </div>
+                      <span className="text-sm text-gray-400">
+                        ({product.rating}) • {product.reviews?.length || 0} reviews
+                      </span>
+                    </div>
+                  )}
+
                   <p className="text-gray-400 mb-4 text-sm leading-relaxed">
                     {product.description}
                   </p>
-                  
+
                   <div className="mb-4">
                     <div className="text-xs text-gray-500 mb-2">Key Notes:</div>
                     <div className="flex flex-wrap gap-1">
-                      {product.notes.map((note, i) => (
+                      {product.notes.slice(0, 3).map((note, i) => (
                         <span key={i} className="bg-gray-800 text-gold-300 px-2 py-1 rounded text-xs">
                           {note}
                         </span>
                       ))}
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <span className="text-2xl font-bold text-gold-400">{product.price}</span>
-                      <span className="text-gray-500 line-through ml-2 text-sm">{product.originalPrice}</span>
+                      {product.originalPrice && product.originalPrice !== product.price && (
+                        <span className="text-gray-500 line-through ml-2 text-sm">{product.originalPrice}</span>
+                      )}
                     </div>
                     <div className={`text-sm font-medium ${product.inStock ? 'text-green-400' : 'text-red-400'}`}>
                       {product.inStock ? 'In Stock' : 'Out of Stock'}
                     </div>
                   </div>
-                  
+
                   <button 
                     disabled={!product.inStock}
-                    onClick={() => handleAddToCart(product)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleAddToCart(product);
+                    }}
                     className={`w-full py-3 font-semibold transition-all duration-300 transform relative overflow-hidden group
                       ${product.inStock 
                         ? 'bg-transparent border-2 border-gold-500 text-gold-400 hover:bg-gold-500 hover:text-black hover:scale-105' 
@@ -283,7 +248,12 @@ const Shop = () => {
                       }`}
                   >
                     <span className="relative z-10 flex items-center justify-center">
-                      {product.inStock ? 'Add to Cart' : 'Out of Stock'}
+                      {!product.inStock 
+                        ? 'Out of Stock' 
+                        : !isLoggedIn 
+                          ? 'Login to Add to Cart'
+                          : 'Add to Cart'
+                      }
                       {product.inStock && <ArrowRight className="ml-2" size={16} />}
                     </span>
                     {product.inStock && (

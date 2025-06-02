@@ -99,3 +99,122 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Stripe AddressElement Fixes */
+.checkout-form-container {
+  position: relative;
+  z-index: 1;
+}
+
+.address-container {
+  position: relative;
+  z-index: 10;
+}
+
+.stripe-address-wrapper {
+  position: relative;
+  z-index: 20;
+  overflow: visible !important;
+}
+
+/* Ensure Stripe autocomplete dropdowns appear above other elements */
+.StripeElement {
+  position: relative !important;
+  z-index: 100 !important;
+}
+
+/* Fix for Stripe AddressElement autocomplete dropdown */
+.p-AddressElement {
+  position: relative !important;
+  z-index: 1000 !important;
+}
+
+/* Style the autocomplete dropdown */
+.p-AddressElement .p-AddressElement-autocomplete {
+  position: absolute !important;
+  z-index: 1001 !important;
+  background: #1F2937 !important;
+  border: 1px solid #D4AF37 !important;
+  border-radius: 6px !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
+  max-height: 200px !important;
+  overflow-y: auto !important;
+  margin-top: 4px !important;
+}
+
+.p-AddressElement .p-AddressElement-autocomplete-item {
+  padding: 12px 16px !important;
+  color: #FFFFFF !important;
+  cursor: pointer !important;
+  font-size: 14px !important;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.1) !important;
+}
+
+.p-AddressElement .p-AddressElement-autocomplete-item:last-child {
+  border-bottom: none !important;
+}
+
+.p-AddressElement .p-AddressElement-autocomplete-item:hover {
+  background: rgba(212, 175, 55, 0.1) !important;
+  color: #D4AF37 !important;
+}
+
+.p-AddressElement .p-AddressElement-autocomplete-item--selected {
+  background: rgba(212, 175, 55, 0.2) !important;
+  color: #D4AF37 !important;
+}
+
+/* Fix for input focus states in AddressElement */
+.p-AddressElement .p-Input:focus {
+  border-color: #D4AF37 !important;
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2) !important;
+  outline: none !important;
+}
+
+/* Prevent container overflow issues */
+.checkout-form-container .address-container,
+.checkout-form-container .stripe-address-wrapper {
+  overflow: visible !important;
+}
+
+/* Custom dust animation styles */
+@keyframes dust-settle {
+  0% {
+    opacity: 1;
+    transform: translateY(-20px) translateX(0) scale(0.5);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translateY(10px) translateX(5px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(20px) translateX(-3px) scale(0.3);
+  }
+}
+
+@keyframes logo-dust-reveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(10px);
+    filter: blur(2px);
+  }
+  40% {
+    opacity: 0.3;
+    transform: scale(0.9) translateY(5px);
+    filter: blur(1px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
+}
+
+.animate-dust-settle {
+  animation: dust-settle 2s ease-out forwards;
+}
+
+.animate-logo-dust-reveal {
+  animation: logo-dust-reveal 2.5s ease-out 1.2s forwards;
+}

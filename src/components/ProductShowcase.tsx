@@ -1,60 +1,19 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-
-const products = [
-  {
-    id: 1,
-    name: "Marquez Noir",
-    description: "A bold and mysterious fragrance with notes of bergamot, black pepper, and sandalwood.",
-    price: "$120",
-    image: "🖤",
-    category: "Unisex"
-  },
-  {
-    id: 2,
-    name: "Golden Essence",
-    description: "An elegant blend of jasmine, vanilla, and amber that captures pure luxury.",
-    price: "$150",
-    image: "✨",
-    category: "Women"
-  },
-  {
-    id: 3,
-    name: "Royal Velvet",
-    description: "A sophisticated scent featuring rose petals, patchouli, and cedar wood.",
-    price: "$135",
-    image: "👑",
-    category: "Women"
-  },
-  {
-    id: 4,
-    name: "Midnight Oud",
-    description: "Deep and intoxicating with oud, leather, and smoky incense notes.",
-    price: "$180",
-    image: "🌙",
-    category: "Men"
-  },
-  {
-    id: 5,
-    name: "Citrus Gold",
-    description: "Fresh and vibrant with bergamot, lemon, and golden amber finish.",
-    price: "$110",
-    image: "🍊",
-    category: "Unisex"
-  },
-  {
-    id: 6,
-    name: "Imperial Rose",
-    description: "Luxurious and romantic with Bulgarian rose, musk, and white tea.",
-    price: "$165",
-    image: "🌹",
-    category: "Women"
-  }
-];
+import { useProducts } from '@/contexts/ProductContext';
+import { useCart } from '@/contexts/CartContext';
+import { useToast } from '@/hooks/use-toast';
+import { Star } from 'lucide-react';
 
 export const ProductShowcase = () => {
   const navigate = useNavigate();
+  const { products } = useProducts();
+  const { addItem } = useCart();
+  const { toast } = useToast();
   
+  // Show first 6 products for homepage showcase
+  const featuredProducts = products.slice(0, 6);
+
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -64,8 +23,50 @@ export const ProductShowcase = () => {
 
   const handleViewCollection = () => {
     navigate('/shop');
-    // Scroll to top after navigation
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleProductClick = (productId: number) => {
+    navigate(`/product/${productId}`);
+  };
+
+  const handleAddToCart = (e: React.MouseEvent, product: any) => {
+    e.stopPropagation();
+    
+    if (!product.inStock) return;
+
+    addItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image
+    });
+
+    toast({
+      title: "Added to Cart",
+      description: `${product.name} has been added to your cart.`,
+    });
+  };
+
+  const renderStars = (rating: number) => {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 !== 0;
+
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(<Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />);
+    }
+
+    if (hasHalfStar) {
+      stars.push(<Star key="half" className="w-4 h-4 fill-yellow-400/50 text-yellow-400" />);
+    }
+
+    const emptyStars = 5 - Math.ceil(rating);
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push(<Star key={`empty-${i}`} className="w-4 h-4 text-gray-400" />);
+    }
+
+    return stars;
   };
 
   return (
@@ -81,13 +82,14 @@ export const ProductShowcase = () => {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {products.map((product, index) => (
+          {featuredProducts.map((product, index) => (
             <div 
               key={product.id}
               className="group bg-gray-900/50 backdrop-blur-sm border border-gold-600/20 rounded-lg p-8 
                        hover:border-gold-400/50 transition-all duration-500 transform hover:scale-105
                        hover:shadow-2xl hover:shadow-gold-500/20 animate-slide-up cursor-pointer"
               style={{animationDelay: `${index * 0.1}s`}}
+              onClick={() => handleProductClick(product.id)}
             >
               <div className="text-center">
                 <div className="text-6xl mb-6 transform group-hover:scale-110 transition-transform duration-300">
@@ -103,22 +105,68 @@ export const ProductShowcase = () => {
                 <h3 className="text-2xl font-bold text-gold-300 mb-4 group-hover:text-gold-200 transition-colors">
                   {product.name}
                 </h3>
+
+                {/* Rating */}
+                {product.rating && product.rating > 0 && (
+                  <div className="flex items-center justify-center mb-3">
+                    <div className="flex items-center mr-2">
+                      {renderStars(product.rating)}
+                    </div>
+                    <span className="text-sm text-gray-400">
+                      ({product.rating}) • {product.reviews?.length || 0} reviews
+                    </span>
+                  </div>
+                )}
                 
-                <p className="text-gray-400 mb-6 leading-relaxed">
+                <p className="text-gray-400 mb-6 leading-relaxed line-clamp-3">
                   {product.description}
                 </p>
-                
-                <div className="text-2xl font-bold text-gold-400 mb-6">
-                  {product.price}
+
+                {/* Pricing */}
+                <div className="mb-4">
+                  <div className="flex items-center justify-center space-x-2">
+                    <span className="text-2xl font-bold text-gold-400">
+                      {product.price}
+                    </span>
+                    {product.originalPrice && product.originalPrice !== product.price && (
+                      <>
+                        <span className="text-lg text-gray-500 line-through">
+                          {product.originalPrice}
+                        </span>
+                        <span className="bg-red-500/20 text-red-300 px-2 py-1 rounded text-xs font-medium">
+                          Save {Math.round((1 - parseFloat(product.price.replace('$', '')) / parseFloat(product.originalPrice.replace('$', ''))) * 100)}%
+                        </span>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {/* Stock Status */}
+                <div className="mb-4">
+                  {product.inStock ? (
+                    <span className="text-green-400 text-sm">✓ In Stock</span>
+                  ) : (
+                    <span className="text-red-400 text-sm">✗ Out of Stock</span>
+                  )}
                 </div>
                 
-                <button className="bg-transparent border-2 border-gold-500 text-gold-400 px-6 py-3 
-                                 hover:bg-gold-500 hover:text-black transition-all duration-300
-                                 transform hover:scale-105 w-full font-semibold relative overflow-hidden group">
-                  <span className="relative z-10">Add to Collection</span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent 
-                                transform -skew-x-12 -translate-x-full group-hover:translate-x-full 
-                                transition-transform duration-700"></div>
+                <button 
+                  onClick={(e) => handleAddToCart(e, product)}
+                  disabled={!product.inStock}
+                  className="bg-transparent border-2 border-gold-500 text-gold-400 px-6 py-3 
+                           hover:bg-gold-500 hover:text-black transition-all duration-300
+                           transform hover:scale-105 w-full font-semibold relative overflow-hidden group
+                           disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent 
+                           disabled:hover:text-gold-400 disabled:hover:scale-100"
+                >
+                  <span className="relative z-10">
+                    {product.inStock ? 'Add to Cart' : 'Out of Stock'}
+                  </span>
+                  {product.inStock && (
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent 
+                                  transform -skew-x-12 -translate-x-full group-hover:translate-x-full 
+                                  transition-transform duration-700"></div>
+                  )}
                 </button>
               </div>
             </div>

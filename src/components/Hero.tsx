@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ChevronDown } from 'lucide-react';
 
@@ -21,6 +20,43 @@ export const Hero = () => {
       </div>
 
       <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
+        <div className="mb-8 relative">
+          {/* Dust particles */}
+          <div className="absolute inset-0 pointer-events-none">
+            {[...Array(12)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute w-1 h-1 bg-gold-400 rounded-full opacity-0 animate-dust-settle"
+                style={{
+                  left: `${20 + Math.random() * 60}%`,
+                  top: `${20 + Math.random() * 60}%`,
+                  animationDelay: `${i * 0.1}s`,
+                  animationDuration: '2s'
+                }}
+              />
+            ))}
+            {[...Array(8)].map((_, i) => (
+              <div
+                key={`small-${i}`}
+                className="absolute w-0.5 h-0.5 bg-gold-300 rounded-full opacity-0 animate-dust-settle"
+                style={{
+                  left: `${10 + Math.random() * 80}%`,
+                  top: `${10 + Math.random() * 80}%`,
+                  animationDelay: `${i * 0.15 + 0.5}s`,
+                  animationDuration: '1.8s'
+                }}
+              />
+            ))}
+          </div>
+          
+          {/* Logo with dust reveal animation */}
+          <img 
+            src="/images/mar_logo-removebg-preview.png" 
+            alt="Marquez Logo" 
+            className="h-28 md:h-32 w-auto mx-auto mb-[-14px] opacity-0 animate-logo-dust-reveal"
+          />
+        </div>
+        
         <h1 className="text-6xl md:text-8xl font-bold mb-6 animate-fade-in">
           <span className="bg-gradient-to-r from-gold-300 via-gold-400 to-gold-600 bg-clip-text text-transparent">
             MARQUEZ

@@ -58,7 +58,7 @@ export const Contact = () => {
                 </div>
                 <div>
                   <h4 className="text-lg font-semibold text-white">Phone</h4>
-                  <p className="text-gray-400">+1 (555) 123-4567</p>
+                  <p className="text-gray-400">+91 7775032268</p>
                 </div>
               </div>
 
@@ -68,7 +68,7 @@ export const Contact = () => {
                 </div>
                 <div>
                   <h4 className="text-lg font-semibold text-white">Address</h4>
-                  <p className="text-gray-400">123 Luxury Avenue<br />New York, NY 10001</p>
+                  <p className="text-gray-400">Chichani Khadinaka, India</p>
                 </div>
               </div>
             </div>
