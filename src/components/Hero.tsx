@@ -8,9 +8,9 @@ export const Hero = () => {
   };
 
   return (
-    <section id="home" className="min-h-screen flex items-center justify-center relative overflow-hidden">
+    <section id="home" className="min-h-screen flex items-center justify-center relative overflow-hidden shadow-lg">
       {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black shadow-lg"></div>
       
       {/* Floating golden particles */}
       <div className="absolute inset-0">
@@ -57,17 +57,17 @@ export const Hero = () => {
           />
         </div>
         
-        <h1 className="text-6xl md:text-8xl font-bold mb-3 animate-fade-in">
+        <h1 className="font-serif text-6xl md:text-8xl font-bold mb-3 animate-fade-in">
           <span className="bg-gradient-to-r from-gold-300 via-gold-400 to-gold-600 bg-clip-text text-transparent">
             MARQUEZ
           </span>
         </h1>
         
-        <p className="text-xl md:text-2xl text-gray-300 mb-8 animate-slide-up" style={{animationDelay: '0.3s'}}>
+        <p className="font-serif text-xl md:text-2xl text-gray-300 mb-8 animate-slide-up" style={{animationDelay: '0.3s'}}>
           Luxury Fragrances That Define Elegance
         </p>
         
-        <p className="text-lg text-gray-400 mb-12 max-w-2xl mx-auto animate-slide-up" style={{animationDelay: '0.6s'}}>
+        <p className="font-serif text-md text-gray-400 mb-12 max-w-2xl mx-auto animate-slide-up" style={{animationDelay: '0.6s'}}>
           Discover our exclusive collection of premium perfumes, crafted with the finest ingredients 
           to create unforgettable scent experiences.
         </p>

@@ -40,11 +40,11 @@ const ProductContext = createContext<ProductContextType | undefined>(undefined);
 const initialProducts: Product[] = [
   {
     id: 1,
-    name: "Marquez Noir",
+    name: "Marquez Maximus",
     description: "A bold and mysterious fragrance with notes of bergamot, black pepper, and sandalwood. Perfect for evening wear and special occasions.",
     price: "$120",
     originalPrice: "$150",
-    image: "🖤",
+    image: '/images/Maximus.png',
     category: "Unisex",
     size: "100ml",
     notes: ["Bergamot", "Black Pepper", "Sandalwood"],
@@ -72,11 +72,11 @@ const initialProducts: Product[] = [
   },
   {
     id: 2,
-    name: "Golden Essence",
+    name: "Marquez Victoria",
     description: "An elegant blend of jasmine, vanilla, and amber that captures pure luxury and sophistication.",
     price: "$150",
     originalPrice: "$180",
-    image: "✨",
+    image: '/images/Victoria.png',
     category: "Women",
     size: "100ml",
     notes: ["Jasmine", "Vanilla", "Amber"],
@@ -96,11 +96,11 @@ const initialProducts: Product[] = [
   },
   {
     id: 3,
-    name: "Royal Velvet",
+    name: "Marquez Cardinal",
     description: "A sophisticated scent featuring rose petals, patchouli, and cedar wood for the modern woman.",
     price: "$135",
     originalPrice: "$160",
-    image: "👑",
+    image: '/images/Cardinal.png',
     category: "Women",
     size: "100ml",
     notes: ["Rose Petals", "Patchouli", "Cedar Wood"],
@@ -111,11 +111,11 @@ const initialProducts: Product[] = [
   },
   {
     id: 4,
-    name: "Midnight Oud",
+    name: "Marquez Bayard",
     description: "Deep and intoxicating with oud, leather, and smoky incense notes. A masterpiece for the connoisseur.",
     price: "$180",
     originalPrice: "$220",
-    image: "🌙",
+    image: '/images/Bayard.png',
     category: "Men",
     size: "100ml",
     notes: ["Oud", "Leather", "Smoky Incense"],
@@ -126,11 +126,11 @@ const initialProducts: Product[] = [
   },
   {
     id: 5,
-    name: "Citrus Gold",
+    name: "Marquez Combo pack",
     description: "Fresh and vibrant with bergamot, lemon, and golden amber finish. Perfect for daily wear.",
     price: "$110",
     originalPrice: "$130",
-    image: "🍊",
+    image: '/images/combo.png',
     category: "Unisex",
     size: "100ml",
     notes: ["Bergamot", "Lemon", "Golden Amber"],
@@ -141,11 +141,11 @@ const initialProducts: Product[] = [
   },
   {
     id: 6,
-    name: "Imperial Rose",
+    name: "Marquez Napoleon",
     description: "Luxurious and romantic with Bulgarian rose, musk, and white tea. An enchanting feminine fragrance.",
     price: "$165",
     originalPrice: "$190",
-    image: "🌹",
+    image: '/images/Napolean.png',
     category: "Women",
     size: "100ml",
     notes: ["Bulgarian Rose", "Musk", "White Tea"],
@@ -167,14 +167,14 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
     } else {
       // If no saved products, use initial products
       setProducts(initialProducts);
-      localStorage.setItem('products', JSON.stringify(initialProducts));
+      // localStorage.setItem('products', JSON.stringify(initialProducts));
     }
   }, []);
 
   // Save products to localStorage whenever products change
-  useEffect(() => {
-    localStorage.setItem('products', JSON.stringify(products));
-  }, [products]);
+  // useEffect(() => {
+    // localStorage.setItem('products', JSON.stringify(products));
+  // }, [products]);
 
   const addProduct = (product: Omit<Product, 'id'>) => {
     const newProduct: Product = {

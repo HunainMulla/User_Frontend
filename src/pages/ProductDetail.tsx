@@ -150,8 +150,26 @@ const ProductDetail = () => {
             {/* Product Image */}
             <div className="flex justify-center items-center">
               <div className="text-center">
-                <div className="text-9xl mb-8 animate-float">
-                  {product.image}
+                <div className="flex justify-center mb-8 animate-float max-h-72">
+                  {product.image.startsWith('/') ? (
+                    <img 
+                      src={product.image} 
+                      alt={product.name}
+                      className="max-h-full max-w-full object-contain"
+                      onError={(e) => {
+                        // Fallback to emoji if image fails to load
+                        const target = e.target as HTMLImageElement;
+                        target.onerror = null;
+                        target.style.display = 'none';
+                        const fallback = document.createElement('div');
+                        fallback.className = 'text-9xl';
+                        fallback.textContent = '🛍️';
+                        target.parentNode?.insertBefore(fallback, target);
+                      }}
+                    />
+                  ) : (
+                    <div className="text-9xl">{product.image}</div>
+                  )}
                 </div>
                 <div className="flex justify-center space-x-4">
                   <button className="p-3 bg-gray-800 rounded-full hover:bg-gray-700 transition-colors">

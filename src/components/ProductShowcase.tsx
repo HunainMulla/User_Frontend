@@ -11,6 +11,14 @@ export const ProductShowcase = () => {
   const { addItem } = useCart();
   const { toast } = useToast();
   
+  // Debug: Log the first product's image path
+  React.useEffect(() => {
+    if (products.length > 0) {
+      console.log('First product image path:', products[0].image);
+      console.log('Full path:', new URL(products[0].image, window.location.origin).href);
+    }
+  }, [products]);
+  
   // Show first 6 products for homepage showcase
   const featuredProducts = products.slice(0, 6);
 
@@ -85,15 +93,33 @@ export const ProductShowcase = () => {
           {featuredProducts.map((product, index) => (
             <div 
               key={product.id}
-              className="group bg-gray-900/50 backdrop-blur-sm border border-gold-600/20 rounded-lg p-8 
+              className="group bg-gray-900/50 backdrop-blur-sm border border-gold-600/20 rounded-lg p-4 
                        hover:border-gold-400/50 transition-all duration-500 transform hover:scale-105
                        hover:shadow-2xl hover:shadow-gold-500/20 animate-slide-up cursor-pointer"
               style={{animationDelay: `${index * 0.1}s`}}
               onClick={() => handleProductClick(product.id)}
             >
               <div className="text-center">
-                <div className="text-6xl mb-6 transform group-hover:scale-110 transition-transform duration-300">
-                  {product.image}
+                <div className="h-28 flex items-center justify-center mb-2 transform group-hover:scale-105 transition-transform duration-300">
+                  {product.image.startsWith('/') ? (
+                    <img 
+                      src={product.image} 
+                      alt={product.name}
+                      className="max-h-24 max-w-full object-contain"
+                      onError={(e) => {
+                        // Fallback to emoji if image fails to load
+                        const target = e.target as HTMLImageElement;
+                        target.onerror = null;
+                        target.style.display = 'none';
+                        const fallback = document.createElement('div');
+                        fallback.className = 'text-6xl';
+                        fallback.textContent = '🛍️';
+                        target.parentNode?.insertBefore(fallback, target);
+                      }}
+                    />
+                  ) : (
+                    <div className="text-6xl">{product.image}</div>
+                  )}
                 </div>
                 
                 <div className="mb-4">
@@ -102,7 +128,7 @@ export const ProductShowcase = () => {
                   </span>
                 </div>
                 
-                <h3 className="text-2xl font-bold text-gold-300 mb-4 group-hover:text-gold-200 transition-colors">
+                <h3 className="text-xl font-bold text-gold-300 mb-2 group-hover:text-gold-200 transition-colors">
                   {product.name}
                 </h3>
 
@@ -118,14 +144,14 @@ export const ProductShowcase = () => {
                   </div>
                 )}
                 
-                <p className="text-gray-400 mb-6 leading-relaxed line-clamp-3">
+                <p className="text-gray-400 mb-3 text-xs leading-relaxed line-clamp-2">
                   {product.description}
                 </p>
 
                 {/* Pricing */}
                 <div className="mb-4">
                   <div className="flex items-center justify-center space-x-2">
-                    <span className="text-2xl font-bold text-gold-400">
+                    <span className="text-xl font-bold text-gold-400">
                       {product.price}
                     </span>
                     {product.originalPrice && product.originalPrice !== product.price && (

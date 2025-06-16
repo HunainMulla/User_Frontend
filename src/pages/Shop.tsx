@@ -123,32 +123,32 @@ const Shop = () => {
                            text-white placeholder-gray-400 focus:outline-none focus:border-gold-400
                            transition-all duration-300"
                 />
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
               </div>
             </div>
 
-            {/* Filters */}
-            <div className="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-8">
-              <div className="flex space-x-3">
-                {categories.map((category) => (
-                  <button
-                    key={category}
-                    onClick={() => setSelectedCategory(category)}
-                    className={`px-4 py-2 text-sm rounded-full transition-all duration-300 ${
-                      selectedCategory === category
-                        ? 'bg-gold-500 text-black font-semibold'
-                        : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                    }`}
-                  >
-                    {category}
-                  </button>
-                ))}
-              </div>
+            {/* Category Filters */}
+            <div className="flex flex-wrap justify-center gap-4 mb-8">
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  className={`px-4 py-2 text-sm rounded-full transition-all ${
+                    selectedCategory === category
+                      ? 'bg-gold-500 text-black font-semibold'
+                      : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
 
+            {/* Sort Dropdown */}
+            <div className="flex justify-center mb-8">
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="bg-gray-800 text-white px-3 py-2 text-sm rounded-lg border border-gold-600/20 
+                className="bg-gray-800 text-white px-4 py-2 text-sm rounded-lg border border-gold-600/20 
                          focus:outline-none focus:border-gold-400"
               >
                 <option value="name">Sort by Name</option>
@@ -156,126 +156,129 @@ const Shop = () => {
                 <option value="rating">Sort by Rating</option>
               </select>
             </div>
-          </div>
 
-          {/* Results Count */}
-          <div className="text-center mb-8">
-            <p className="text-gray-400">
-              {sortedProducts.length === 0 
-                ? 'No products found' 
-                : `Showing ${sortedProducts.length} product${sortedProducts.length === 1 ? '' : 's'}`}
-            </p>
-          </div>
+            {/* Results Count */}
+            <div className="text-center mb-6">
+              <p className="text-gray-400">
+                {sortedProducts.length === 0 
+                  ? 'No products found' 
+                  : `Showing ${sortedProducts.length} product${sortedProducts.length === 1 ? '' : 's'}`}
+              </p>
+            </div>
 
-          {/* Products Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {sortedProducts.map((product, index) => (
-              <div 
-                key={product.id}
-                className="group bg-gray-900/50 backdrop-blur-sm border border-gold-600/20 rounded-lg overflow-hidden
-                         hover:border-gold-400/50 transition-all duration-500 transform hover:scale-105
-                         hover:shadow-2xl hover:shadow-gold-500/20 animate-slide-up cursor-pointer"
-                style={{animationDelay: `${index * 0.1}s`}}
-                onClick={() => handleProductClick(product.id)}
-              >
-                <div className="p-6">
-                  <div className="text-center mb-4">
-                    <div className="text-6xl mb-4 transform group-hover:scale-110 transition-transform duration-300">
-                      {product.image}
+            {/* Products Grid */}
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full">
+              {sortedProducts.map((product, index) => (
+                <div 
+                  key={product.id}
+                  className="group bg-gray-900/50 backdrop-blur-sm border border-gold-600/20 rounded-lg p-4 
+                           hover:border-gold-400/50 transition-all duration-500 transform hover:scale-105
+                           hover:shadow-2xl hover:shadow-gold-500/20 animate-slide-up cursor-pointer"
+                  style={{animationDelay: `${index * 0.1}s`}}
+                  onClick={() => handleProductClick(product.id)}
+                >
+                  <div className="text-center">
+                    <div className="h-28 flex items-center justify-center mb-2 transform group-hover:scale-105 transition-transform duration-300">
+                      {product.image.startsWith('/') ? (
+                        <img 
+                          src={product.image} 
+                          alt={product.name}
+                          className="max-h-24 max-w-full object-contain"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.onerror = null;
+                            target.style.display = 'none';
+                            const fallback = document.createElement('div');
+                            fallback.className = 'text-6xl';
+                            fallback.textContent = '🛍️';
+                            target.parentNode?.insertBefore(fallback, target);
+                          }}
+                        />
+                      ) : (
+                        <div className="text-6xl">{product.image}</div>
+                      )}
                     </div>
                     
-                    <div className="flex justify-between items-center mb-2">
+                    <div className="mb-2">
                       <span className="inline-block bg-gold-600/20 text-gold-300 px-2 py-1 rounded-full text-xs font-medium">
                         {product.category}
                       </span>
-                      <span className="text-gray-400 text-sm">{product.size}</span>
                     </div>
-                  </div>
+                    
+                    <h3 className="text-lg font-bold text-gold-300 mb-1 group-hover:text-gold-200 transition-colors">
+                      {product.name}
+                    </h3>
+                    
+                    {/* Description */}
+                    <p className="text-sm text-gray-400 mb-2 line-clamp-2 h-10">
+                      {product.description}
+                    </p>
 
-                  <h3 className="text-xl font-bold text-gold-300 mb-3 group-hover:text-gold-200 transition-colors">
-                    {product.name}
-                  </h3>
-
-                  {/* Rating */}
-                  {product.rating && product.rating > 0 && (
-                    <div className="flex items-center justify-center mb-3">
-                      <div className="flex items-center mr-2">
-                        {renderStars(product.rating)}
-                      </div>
-                      <span className="text-sm text-gray-400">
-                        ({product.rating}) • {product.reviews?.length || 0} reviews
-                      </span>
-                    </div>
-                  )}
-
-                  <p className="text-gray-400 mb-4 text-sm leading-relaxed">
-                    {product.description}
-                  </p>
-
-                  <div className="mb-4">
-                    <div className="text-xs text-gray-500 mb-2">Key Notes:</div>
-                    <div className="flex flex-wrap gap-1">
-                      {product.notes.slice(0, 3).map((note, i) => (
-                        <span key={i} className="bg-gray-800 text-gold-300 px-2 py-1 rounded text-xs">
-                          {note}
+                    {/* Rating */}
+                    {product.rating && product.rating > 0 && (
+                      <div className="flex items-center justify-center mb-2">
+                        <div className="flex items-center mr-2">
+                          {renderStars(product.rating)}
+                        </div>
+                        <span className="text-xs text-gray-400">
+                          ({product.rating}) • {product.reviews?.length || 0} reviews
                         </span>
-                      ))}
-                    </div>
-                  </div>
+                      </div>
+                    )}
 
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <span className="text-2xl font-bold text-gold-400">{product.price}</span>
-                      {product.originalPrice && product.originalPrice !== product.price && (
-                        <span className="text-gray-500 line-through ml-2 text-sm">{product.originalPrice}</span>
-                      )}
+                    {/* Price */}
+                    <div className="mb-3">
+                      <div className="flex items-center justify-center space-x-2">
+                        <span className="text-lg font-bold text-gold-400">
+                          {product.price}
+                        </span>
+                        {product.originalPrice && product.originalPrice !== product.price && (
+                          <span className="text-sm text-gray-500 line-through">
+                            {product.originalPrice}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                    <div className={`text-sm font-medium ${product.inStock ? 'text-green-400' : 'text-red-400'}`}>
-                      {product.inStock ? 'In Stock' : 'Out of Stock'}
-                    </div>
-                  </div>
 
-                  <button 
-                    disabled={!product.inStock}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleAddToCart(product);
-                    }}
-                    className={`w-full py-3 font-semibold transition-all duration-300 transform relative overflow-hidden group
-                      ${product.inStock 
-                        ? 'bg-transparent border-2 border-gold-500 text-gold-400 hover:bg-gold-500 hover:text-black hover:scale-105' 
-                        : 'bg-gray-700 text-gray-500 cursor-not-allowed border-2 border-gray-600'
-                      }`}
-                  >
-                    <span className="relative z-10 flex items-center justify-center">
-                      {!product.inStock 
-                        ? 'Out of Stock' 
-                        : !isLoggedIn 
-                          ? 'Login to Add to Cart'
-                          : 'Add to Cart'
-                      }
-                      {product.inStock && <ArrowRight className="ml-2" size={16} />}
-                    </span>
-                    {product.inStock && (
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent 
+                    {/* Add to Cart Button */}
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddToCart(product);
+                      }}
+                      disabled={!product.inStock}
+                      className="bg-transparent border-2 border-gold-500 text-gold-400 px-4 py-2 
+                               hover:bg-gold-500 hover:text-black transition-all duration-300
+                               transform hover:scale-105 w-full font-semibold relative overflow-hidden group
+                               disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent 
+                               disabled:hover:text-gold-400 disabled:hover:scale-100 text-sm"
+                    >
+                      <span className="relative z-10">
+                        {product.inStock ? 'Add to Cart' : 'Out of Stock'}
+                      </span>
+                      {product.inStock && (
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent 
                                     transform -skew-x-12 -translate-x-full group-hover:translate-x-full 
                                     transition-transform duration-700"></div>
-                    )}
-                  </button>
+                      )}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
 
-          {/* Call to Action */}
-          <div className="text-center mt-16">
-            <div className="bg-gradient-to-r from-gold-500/10 to-gold-600/10 border border-gold-500/20 rounded-lg p-8">
-              <h3 className="text-3xl font-bold text-gold-400 mb-4">Can't Find What You're Looking For?</h3>
-              <p className="text-gray-300 mb-6">Contact our fragrance experts for personalized recommendations</p>
-              <button className="bg-gradient-to-r from-gold-500 to-gold-600 text-black px-8 py-3 font-semibold 
-                               hover:from-gold-400 hover:to-gold-500 transition-all duration-300 transform hover:scale-105">
-                Contact Us
-              </button>
+            {/* Call to Action */}
+            <div className="text-center mt-16 w-full">
+              <div className="bg-gradient-to-r from-gold-500/10 to-gold-600/10 border border-gold-500/20 rounded-lg p-8">
+                <h3 className="text-3xl font-bold text-gold-400 mb-4">Can't Find What You're Looking For?</h3>
+                <p className="text-gray-300 mb-6">Contact our fragrance experts for personalized recommendations</p>
+                <button 
+                  className="bg-gradient-to-r from-gold-500 to-gold-600 text-black px-8 py-3 font-semibold
+                           hover:from-gold-400 hover:to-gold-500 transition-all duration-300 transform hover:scale-105"
+                >
+                  Contact Us
+                </button>
+              </div>
             </div>
           </div>
         </div>

@@ -70,7 +70,26 @@ export const CartDropdown = () => {
                 <div className="space-y-4 max-h-96 overflow-y-auto">
                   {state.items.map((item) => (
                     <div key={item.id} className="flex items-center space-x-4 border-b border-gold-600/10 pb-4">
-                      <div className="text-2xl">{item.image}</div>
+                      <div className="w-16 h-16 flex items-center justify-center">
+                        {item.image.startsWith('/') ? (
+                          <img 
+                            src={item.image} 
+                            alt={item.name}
+                            className="max-h-full max-w-full object-contain"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.onerror = null;
+                              target.style.display = 'none';
+                              const fallback = document.createElement('div');
+                              fallback.className = 'text-2xl';
+                              fallback.textContent = '🛍️';
+                              target.parentNode?.insertBefore(fallback, target);
+                            }}
+                          />
+                        ) : (
+                          <div className="text-2xl">{item.image}</div>
+                        )}
+                      </div>
                       <div className="flex-1">
                         <h4 className="text-sm font-medium text-white">{item.name}</h4>
                         <p className="text-sm text-gold-400">{item.price}</p>
