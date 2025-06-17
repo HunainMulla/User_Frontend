@@ -19,11 +19,17 @@ import Orders from "./pages/Orders";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
+import { useEffect } from "react";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
+const App = () => {
+  useEffect(()=>{
+    window.scrollTo({top:0,behavior:'smooth'})
+  },[])
+
+  return(
+    <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <ProductProvider>
         <CartProvider>
@@ -53,6 +59,7 @@ const App = () => (
       </ProductProvider>
     </TooltipProvider>
   </QueryClientProvider>
-);
+)
+}
 
 export default App;

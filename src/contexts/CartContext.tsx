@@ -109,6 +109,9 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
+// Track debounce timers for quantity updates so rapid clicks coalesce
+const quantityUpdateTimers: Record<number, ReturnType<typeof setTimeout>> = {};
+
 // API functions
 const getAuthToken = () => localStorage.getItem('token');
 
@@ -240,31 +243,39 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const updateQuantity = async (id: number, quantity: number) => {
-    if (!isLoggedIn) {
-      if (quantity <= 0) {
-        dispatch({ type: 'REMOVE_ITEM', payload: id });
-      } else {
-        dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } });
-      }
-      return;
-    }
+  const updateQuantity = (id: number, quantity: number): Promise<void> => {
+    // Optimistic UI update for snappy feel
+    const optimisticType = quantity <= 0 ? 'REMOVE_ITEM' : 'UPDATE_QUANTITY';
+    const optimisticPayload = optimisticType === 'REMOVE_ITEM' ? id : { id, quantity } as any;
+    dispatch({ type: optimisticType as any, payload: optimisticPayload });
 
-    try {
-      const response = await apiCall('/update', {
-        method: 'PUT',
-        body: JSON.stringify({ id, quantity }),
-      });
-      dispatch({ type: 'SET_CART', payload: response.cart });
-    } catch (error) {
-      console.error('Failed to update quantity:', error);
-      // Fallback to local update
-      if (quantity <= 0) {
-        dispatch({ type: 'REMOVE_ITEM', payload: id });
-      } else {
-        dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } });
-      }
+    // Guests: no server sync needed
+    if (!isLoggedIn) return;
+
+    // Debounce server update so burst clicks send only once
+    if (quantityUpdateTimers[id]) {
+      clearTimeout(quantityUpdateTimers[id]);
     }
+    quantityUpdateTimers[id] = setTimeout(async () => {
+      try {
+        await apiCall('/update', {
+          method: 'PUT',
+          body: JSON.stringify({ id, quantity }),
+        });
+        // No need to overwrite state; optimistic state already up-to-date
+      } catch (error) {
+        console.error('Failed to update quantity:', error);
+        // Fetch server state to correct if needed
+        try {
+          const fallback = await apiCall('/');
+          dispatch({ type: 'SET_CART', payload: fallback.cart });
+        } catch (e) {
+          console.error('Also failed to fetch cart:', e);
+        }
+      }
+    }, 300);
+
+    return Promise.resolve();
   };
 
   const clearCart = async () => {

@@ -8,6 +8,11 @@ import { useSelector } from 'react-redux';
 import { ArrowRight, Search, Star } from 'lucide-react';
 
 const Shop = () => {
+
+  useEffect(()=>{
+    window.scrollTo({top:0,behavior:'smooth'})
+  },[])
+
   const navigate = useNavigate();
   const { products } = useProducts();
   const { addItem } = useCart();

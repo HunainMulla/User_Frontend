@@ -18,6 +18,7 @@ const ProductDetail = () => {
 
   const [product, setProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState(1);
+  const [selectedSize, setSelectedSize] = useState<{ volume: string; price: string } | null>(null);
   const [activeTab, setActiveTab] = useState('details');
   const [reviewData, setReviewData] = useState({
     rating: 5,
@@ -31,6 +32,18 @@ const ProductDetail = () => {
       setProduct(foundProduct || null);
     }
   }, [id, getProduct]);
+
+  // Initialize selected size whenever product changes
+  useEffect(() => {
+    if (product) {
+      if (product.sizes && product.sizes.length > 0) {
+        setSelectedSize(product.sizes[0]);
+      } else {
+        // fallback to legacy single-size fields
+        setSelectedSize({ volume: product.size ?? '', price: product.price });
+      }
+    }
+  }, [product]);
 
   if (!product) {
     return (
@@ -48,13 +61,13 @@ const ProductDetail = () => {
   }
 
   const handleAddToCart = () => {
-    if (!product.inStock) return;
+    if (!product.inStock || !selectedSize) return;
 
     for (let i = 0; i < quantity; i++) {
       addItem({
         id: product.id,
-        name: product.name,
-        price: product.price,
+        name: `${product.name} (${selectedSize.volume})`,
+        price: selectedSize.price,
         image: product.image
       });
     }
@@ -122,9 +135,9 @@ const ProductDetail = () => {
   };
 
   const calculateDiscount = () => {
-    if (!product.originalPrice || product.originalPrice === product.price) return 0;
+    if (!product.originalPrice || !selectedSize) return 0;
     const original = parseFloat(product.originalPrice.replace('$', ''));
-    const current = parseFloat(product.price.replace('$', ''));
+    const current = parseFloat(selectedSize.price.replace('$', ''));
     return Math.round((1 - current / original) * 100);
   };
 
@@ -190,7 +203,7 @@ const ProductDetail = () => {
                   {product.category}
                 </span>
                 <span className="bg-gray-800 text-gray-300 px-4 py-2 rounded-full text-sm">
-                  {product.size}
+                  {selectedSize?.volume}
                 </span>
                 {calculateDiscount() > 0 && (
                   <span className="bg-red-500/20 text-red-300 px-4 py-2 rounded-full text-sm font-medium">
@@ -221,10 +234,30 @@ const ProductDetail = () => {
                 {product.description}
               </p>
 
+              {/* Size Selector */}
+              {product.sizes && product.sizes.length > 0 && (
+                <div className="flex items-center space-x-2">
+                  <label htmlFor="size" className="text-gray-300">Size:</label>
+                  <select
+                    id="size"
+                    value={selectedSize?.volume}
+                    onChange={e => {
+                      const sel = product.sizes?.find(s => s.volume === e.target.value);
+                      if (sel) setSelectedSize(sel);
+                    }}
+                    className="bg-gray-800 border border-gold-600/20 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-gold-400"
+                  >
+                    {product.sizes.map(s => (
+                      <option key={s.volume} value={s.volume}>{s.volume} - {s.price}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
               {/* Pricing */}
               <div className="flex items-center space-x-4">
                 <span className="text-4xl font-bold text-gold-400">
-                  {product.price}
+                  {selectedSize?.price}
                 </span>
                 {product.originalPrice && product.originalPrice !== product.price && (
                   <span className="text-2xl text-gray-500 line-through">
@@ -262,7 +295,7 @@ const ProductDetail = () => {
                     className="flex-1 bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-400 hover:to-gold-500 text-black font-semibold py-4 text-lg"
                   >
                     <ShoppingCart className="mr-2" size={20} />
-                    Add to Cart - {(parseFloat(product.price.replace('$', '')) * quantity).toFixed(2)}
+                    Add to Cart - {(selectedSize ? (parseFloat(selectedSize.price.replace('$',''))*quantity).toFixed(2) : '')}
                   </Button>
                 </div>
               )}

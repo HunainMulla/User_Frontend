@@ -40,19 +40,30 @@ export const ProductShowcase = () => {
 
   const handleAddToCart = (e: React.MouseEvent, product: any) => {
     e.stopPropagation();
-    
+
     if (!product.inStock) return;
+
+    // Determine default 50ml size & price
+    let chosenVolume = product.size || '50ml';
+    let chosenPrice = product.price;
+
+    if (product.sizes && product.sizes.length > 0) {
+      const preferred = product.sizes.find((s: any) => s.volume === '50ml');
+      const selection = preferred || product.sizes[0];
+      chosenVolume = selection.volume;
+      chosenPrice = selection.price;
+    }
 
     addItem({
       id: product.id,
-      name: product.name,
-      price: product.price,
+      name: `${product.name} (${chosenVolume})`,
+      price: chosenPrice,
       image: product.image
     });
 
     toast({
-      title: "Added to Cart",
-      description: `${product.name} has been added to your cart.`,
+      title: 'Added to Cart',
+      description: `${product.name} (${chosenVolume}) has been added to your cart.`,
     });
   };
 
@@ -100,7 +111,7 @@ export const ProductShowcase = () => {
               onClick={() => handleProductClick(product.id)}
             >
               <div className="text-center">
-                <div className="h-28 flex items-center justify-center mb-2 transform group-hover:scale-105 transition-transform duration-300">
+                <div className="h-32 flex items-center justify-center mb-2 transform group-hover:scale-105 transition-transform duration-300">
                   {product.image.startsWith('/') ? (
                     <img 
                       src={product.image} 

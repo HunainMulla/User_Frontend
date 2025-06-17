@@ -169,7 +169,22 @@ const Checkout = () => {
                 <div className="space-y-4 mb-6">
                   {cartState.items.map((item) => (
                     <div key={item.id} className="flex items-center space-x-4 pb-4 border-b border-gold-600/10">
-                      <div className="text-2xl">{item.image}</div>
+                      <div className="w-16 h-16 flex items-center justify-center">
+                          {item.image && item.image.startsWith('/') ? (
+                            <img
+                              src={item.image}
+                              alt={item.name}
+                              className="max-h-full max-w-full object-contain rounded"
+                              onError={(e) => {
+                                const target = e.currentTarget as HTMLImageElement;
+                                target.onerror = null;
+                                target.style.display = 'none';
+                              }}
+                            />
+                          ) : (
+                            <div className="text-2xl">{item.image}</div>
+                          )}
+                        </div>
                       <div className="flex-1">
                         <h3 className="font-medium text-white">{item.name}</h3>
                         <p className="text-sm text-gray-400">Quantity: {item.quantity}</p>

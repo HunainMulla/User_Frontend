@@ -1,9 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Mail, Phone, MapPin, Clock, Send, Globe, Instagram, Facebook, Twitter } from 'lucide-react';
 
 const Contact = () => {
+
+  
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: '',
@@ -15,7 +22,7 @@ const Contact = () => {
 
   const contactInfo = [
     {
-      icon: <Mail className="w-6 h-6 text-gold-400" />,
+      icon: <Mail className="w-6 h-6 text-gold-400" />, 
       title: "Email Us",
       details: "info@marquezperfumes.com",
       subdetails: "support@marquezperfumes.com"
@@ -239,13 +246,13 @@ const Contact = () => {
                 <div className="bg-gray-800/50 rounded-lg p-6 mb-4">
                   <div className="text-6xl text-center mb-4">🏢</div>
                   <p className="text-gray-300 text-center">
-                    Experience our fragrances in person at our luxurious flagship store in the heart of New York City.
+                    Experience our fragrances in person at our luxurious flagship store in the heart of Chinchani, Maharashtra, India.
                   </p>
                 </div>
                 <div className="space-y-2 text-sm text-gray-300">
-                  <p><strong>Address:</strong> 123 Luxury Avenue, New York, NY 10001</p>
+                  <p><strong>Address:</strong> Chinchani, Maharashtra, India 401503</p>
                   <p><strong>Nearest Subway:</strong> Times Square - 42nd Street</p>
-                  <p><strong>Parking:</strong> Valet parking available</p>
+                  {/* <p><strong>Parking:</strong> Valet parking available</p> */}
                 </div>
               </div>
 

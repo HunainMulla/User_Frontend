@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { Star, Award, Heart, Leaf, Globe, Users } from 'lucide-react';
 
 const About = () => {
+
+
+  useEffect(()=>{
+    window.scrollTo({top:0,behavior:'smooth'})
+  },[])
+
   const values = [
     {
       icon: <Award className="w-8 h-8 text-gold-400" />,
@@ -53,7 +59,7 @@ const About = () => {
     {
       name: "Sakib Shaikh",
       role: "Master Perfumer",
-      image: "👩‍🔬",
+      image: "🧑‍💼",
       description: "With over 20 years of experience, Sakib leads our fragrance creation with unmatched expertise."
     },
     {

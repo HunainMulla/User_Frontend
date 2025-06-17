@@ -13,6 +13,7 @@ interface OrderItem {
   price: string;
   image: string;
   quantity: number;
+  size?: string; // bottle volume like 20ml / 50ml / 100ml
 }
 
 interface Order {
@@ -565,6 +566,9 @@ const UserOrders = () => {
                         />
                         <div>
                           <p className="font-medium text-white">{item.name}</p>
+                          {item.size && (
+                            <p className="text-sm text-gray-400">Size: {item.size}</p>
+                          )}
                           <p className="text-sm text-gray-400">Quantity: {item.quantity}</p>
                         </div>
                       </div>

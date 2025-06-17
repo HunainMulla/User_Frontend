@@ -384,7 +384,37 @@ const Orders = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {order.items.slice(0, 3).map((item) => (
                         <div key={item.id} className="flex items-center space-x-3 bg-gray-800/50 p-3 rounded-lg">
-                          <div className="text-2xl">{item.image}</div>
+                          <div className="w-12 h-12 flex items-center justify-center">
+                            {item.image && item.image.startsWith('/') ? (
+                              <img
+                                src={item.image}
+                                alt={item.name}
+                                className="max-h-full max-w-full object-contain rounded"
+                                onError={(e) => {
+                                  const target = e.currentTarget as HTMLImageElement;
+                                  target.onerror = null;
+                                  target.style.display = 'none';
+                                }}
+                              />
+                            ) : (
+                              <div className="w-12 h-12 flex items-center justify-center">
+                            {item.image && item.image.startsWith('/') ? (
+                              <img
+                                src={item.image}
+                                alt={item.name}
+                                className="max-h-full max-w-full object-contain rounded"
+                                onError={(e) => {
+                                  const target = e.currentTarget as HTMLImageElement;
+                                  target.onerror = null;
+                                  target.style.display = 'none';
+                                }}
+                              />
+                            ) : (
+                              <div className="text-2xl">{item.image}</div>
+                            )}
+                          </div>
+                            )}
+                          </div>
                           <div className="flex-1 min-w-0">
                             <h4 className="font-medium text-white truncate">{item.name}</h4>
                             <p className="text-sm text-gray-400">Qty: {item.quantity} • {item.price}</p>
@@ -485,7 +515,37 @@ const Orders = () => {
                 <div className="space-y-3">
                   {selectedOrder.items.map((item) => (
                     <div key={item.id} className="flex items-center space-x-4 bg-gray-800/50 p-4 rounded-lg">
-                      <div className="text-3xl">{item.image}</div>
+                      <div className="w-12 h-12 flex items-center justify-center">
+                          {item.image && item.image.startsWith('/') ? (
+                            <img
+                              src={item.image}
+                              alt={item.name}
+                              className="max-h-full max-w-full object-contain rounded"
+                              onError={(e) => {
+                                const target = e.currentTarget as HTMLImageElement;
+                                target.onerror = null;
+                                target.style.display = 'none';
+                              }}
+                            />
+                          ) : (
+                            <div className="w-12 h-12 flex items-center justify-center">
+                            {item.image && item.image.startsWith('/') ? (
+                              <img
+                                src={item.image}
+                                alt={item.name}
+                                className="max-h-full max-w-full object-contain rounded"
+                                onError={(e) => {
+                                  const target = e.currentTarget as HTMLImageElement;
+                                  target.onerror = null;
+                                  target.style.display = 'none';
+                                }}
+                              />
+                            ) : (
+                              <div className="text-2xl">{item.image}</div>
+                            )}
+                          </div>
+                          )}
+                        </div>
                       <div className="flex-1">
                         <h4 className="font-medium text-white">{item.name}</h4>
                         <p className="text-sm text-gray-400">Quantity: {item.quantity}</p>
