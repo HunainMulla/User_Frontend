@@ -48,7 +48,7 @@ export const Navigation = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-md border-b border-gold-600/20">
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          <div className="text-2xl font-bold text-gold-400 tracking-wider cursor-pointer"
+          <div className="font-serif text-2xl font-bold text-gold-400 tracking-wider cursor-pointer"
                onClick={() => navigate('/')}>
             MARQUEZ
             {isAdmin && <span className="text-xs ml-2 bg-gold-500 text-black px-2 py-1 rounded">ADMIN</span>}
@@ -75,7 +75,7 @@ export const Navigation = () => {
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gold-400 transition-all duration-300 group-hover:w-full"></span>
             </button>}
             <button 
-              onClick={() => scrollToSection('products')}
+              onClick={() => navigate('/shop')}
               className="text-white hover:text-gold-400 transition-colors duration-300 relative group"
             >
               Products
@@ -177,7 +177,7 @@ export const Navigation = () => {
               </button>}
               
               <button 
-                onClick={() => scrollToSection('products')}
+                onClick={() => navigate('/shop')}
                 className="text-white hover:text-gold-400 transition-colors duration-300 text-left"
               >
                 Products
