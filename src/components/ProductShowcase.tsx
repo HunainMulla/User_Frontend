@@ -171,7 +171,7 @@ export const ProductShowcase = () => {
                           {product.originalPrice}
                         </span>
                         <span className="bg-red-500/20 text-red-300 px-2 py-1 rounded text-xs font-medium">
-                          Save {Math.round((1 - parseFloat(product.price.replace('$', '')) / parseFloat(product.originalPrice.replace('$', ''))) * 100)}%
+                          Save {Math.round((1 - parseFloat(product.price.replace('₹', '')) / parseFloat(product.originalPrice.replace('₹', ''))) * 100)}%
                         </span>
                       </>
                     )}

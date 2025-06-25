@@ -81,8 +81,8 @@ const CreateProduct = () => {
     addProduct({
       name: productData.name,
       description: productData.description,
-      price: `$${productData.price}`,
-      originalPrice: productData.originalPrice ? `$${productData.originalPrice}` : `$${productData.price}`,
+      price: `₹${productData.price}`,
+      originalPrice: productData.originalPrice ? `₹${productData.originalPrice}` : `₹${productData.price}`,
       category: productData.category,
       size: productData.size || '100ml',
       inStock: productData.inStock,
@@ -167,10 +167,10 @@ const CreateProduct = () => {
                   </div>
 
                   {/* Pricing */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-300 mb-2">
-                        Price * ($)
+                        Price * (₹)
                       </label>
                       <input
                         type="number"
@@ -179,7 +179,7 @@ const CreateProduct = () => {
                         className="w-full bg-gray-800/50 border border-gold-600/20 rounded-lg px-4 py-3
                                  text-white placeholder-gray-400 focus:outline-none focus:border-gold-400
                                  transition-all duration-300"
-                        placeholder="120"
+                        placeholder="9960"
                         min="0"
                         step="0.01"
                         required
@@ -187,7 +187,7 @@ const CreateProduct = () => {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-300 mb-2">
-                        Original Price ($)
+                        Original Price (₹)
                       </label>
                       <input
                         type="number"
@@ -196,7 +196,7 @@ const CreateProduct = () => {
                         className="w-full bg-gray-800/50 border border-gold-600/20 rounded-lg px-4 py-3
                                  text-white placeholder-gray-400 focus:outline-none focus:border-gold-400
                                  transition-all duration-300"
-                        placeholder="150"
+                        placeholder="12450"
                         min="0"
                         step="0.01"
                       />
@@ -387,11 +387,11 @@ const CreateProduct = () => {
                     <p className="text-sm text-gray-400 mb-3 line-clamp-2">{productData.description}</p>
                     <div className="flex items-center justify-center space-x-2 mb-2">
                       <span className="text-lg font-bold text-gold-400">
-                        ${productData.price}
+                        {productData.price}
                       </span>
                       {productData.originalPrice && productData.originalPrice !== productData.price && (
                         <span className="text-sm text-gray-500 line-through">
-                          ${productData.originalPrice}
+                          {productData.originalPrice}
                         </span>
                       )}
                     </div>

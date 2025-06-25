@@ -78,7 +78,7 @@ const OrderSuccess = () => {
                       <p className="text-gray-400">Quantity: {item.quantity}</p>
                     </div>
                     <div className="text-gold-400 font-semibold text-lg">
-                      ${(parseFloat(item.price.replace('$', '')) * item.quantity).toFixed(2)}
+                      ₹{(parseFloat(item.price.replace('₹', '')) * item.quantity).toFixed(0)}
                     </div>
                   </div>
                 ))}
@@ -88,17 +88,17 @@ const OrderSuccess = () => {
               <div className="space-y-3 pt-6 border-t border-gold-600/20">
                 <div className="flex justify-between text-lg">
                   <span className="text-gray-400">Subtotal:</span>
-                  <span className="text-white">${order.subtotal.toFixed(2)}</span>
+                  <span className="text-white">₹{order.subtotal.toFixed(0)}</span>
                 </div>
                 <div className="flex justify-between text-lg">
                   <span className="text-gray-400">Shipping:</span>
                   <span className="text-white">
-                    {order.shipping === 0 ? 'FREE' : `$${order.shipping.toFixed(2)}`}
+                    {order.shipping === 0 ? 'FREE' : `₹${order.shipping.toFixed(0)}`}
                   </span>
                 </div>
                 <div className="flex justify-between text-xl font-semibold pt-3 border-t border-gold-600/20">
                   <span className="text-gold-400">Total Paid:</span>
-                  <span className="text-gold-400">${order.total.toFixed(2)}</span>
+                  <span className="text-gold-400">₹{order.total.toFixed(0)}</span>
                 </div>
               </div>
             </div>

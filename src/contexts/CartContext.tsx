@@ -93,7 +93,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
 
 const calculateTotal = (items: CartItem[]): number => {
   return items.reduce((total, item) => {
-    const price = parseFloat(item.price.replace('$', ''));
+    const price = parseFloat(item.price.replace('₹', '').replace(/,/g, ''));
     return total + price * item.quantity;
   }, 0);
 };

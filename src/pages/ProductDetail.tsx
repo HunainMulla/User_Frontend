@@ -136,8 +136,8 @@ const ProductDetail = () => {
 
   const calculateDiscount = () => {
     if (!product.originalPrice || !selectedSize) return 0;
-    const original = parseFloat(product.originalPrice.replace('$', ''));
-    const current = parseFloat(selectedSize.price.replace('$', ''));
+    const original = parseFloat(product.originalPrice.replace('₹', ''));
+    const current = parseFloat(selectedSize.price.replace('₹', ''));
     return Math.round((1 - current / original) * 100);
   };
 
@@ -295,7 +295,7 @@ const ProductDetail = () => {
                     className="flex-1 bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-400 hover:to-gold-500 text-black font-semibold py-4 text-lg"
                   >
                     <ShoppingCart className="mr-2" size={20} />
-                    Add to Cart - {(selectedSize ? (parseFloat(selectedSize.price.replace('$',''))*quantity).toFixed(2) : '')}
+                    Add to Cart - ₹{selectedSize ? (parseFloat(selectedSize.price.replace('₹',''))*quantity).toLocaleString('en-IN') : ''}
                   </Button>
                 </div>
               )}

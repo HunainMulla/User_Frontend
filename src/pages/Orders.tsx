@@ -37,7 +37,9 @@ interface Order {
   shippingAddress?: any;
   billingAddress?: any;
   paymentMethod: string;
-  stripePaymentIntentId: string;
+  razorpayOrderId?: string;
+  razorpayPaymentId?: string;
+  razorpaySignature?: string;
 }
 
 interface OrderStats {
@@ -59,6 +61,41 @@ const Orders = () => {
   const [autoUpdating, setAutoUpdating] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [showOrderDetails, setShowOrderDetails] = useState(false);
+
+  // Calculate expected delivery date (7 days from order date)
+  const calculateDeliveryDate = (orderDate: string): string => {
+    const orderDateObj = new Date(orderDate);
+    const deliveryDate = new Date(orderDateObj);
+    deliveryDate.setDate(deliveryDate.getDate() + 7);
+    return deliveryDate.toISOString();
+  };
+
+  // Format delivery date for display
+  const formatDeliveryDate = (orderDate: string): string => {
+    const deliveryDate = calculateDeliveryDate(orderDate);
+    return new Date(deliveryDate).toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  // Check if delivery date is today or past due
+  const getDeliveryStatus = (orderDate: string): { status: 'upcoming' | 'today' | 'overdue'; color: string } => {
+    const deliveryDate = new Date(calculateDeliveryDate(orderDate));
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    deliveryDate.setHours(0, 0, 0, 0);
+
+    if (deliveryDate.getTime() === today.getTime()) {
+      return { status: 'today', color: 'text-yellow-400' };
+    } else if (deliveryDate < today) {
+      return { status: 'overdue', color: 'text-red-400' };
+    } else {
+      return { status: 'upcoming', color: 'text-green-400' };
+    }
+  };
 
   // Redirect if not logged in
   useEffect(() => {
@@ -291,14 +328,14 @@ const Orders = () => {
 
           {/* Stats Cards */}
           {stats && (
-            <div className="grid md:grid-cols-4 gap-6 mb-12">
+            <div className="grid md:grid-cols-4 gap-6 mb-8">
               <div className="bg-gray-900/50 border border-gold-600/20 rounded-lg p-6">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-400 text-sm">Total Orders</p>
-                    <p className="text-2xl font-bold text-gold-400">{stats.totalOrders}</p>
+                    <p className="text-2xl font-bold text-white">{stats.totalOrders}</p>
                   </div>
-                  <ShoppingBag className="text-gold-400" size={24} />
+                  <Package className="text-gold-400" size={24} />
                 </div>
               </div>
               
@@ -306,9 +343,9 @@ const Orders = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-400 text-sm">Total Spent</p>
-                    <p className="text-2xl font-bold text-green-400">${stats.totalSpent.toFixed(2)}</p>
+                    <p className="text-2xl font-bold text-green-400">₹{stats.totalSpent.toLocaleString('en-IN')}</p>
                   </div>
-                  <DollarSign className="text-green-400" size={24} />
+                  <span className="text-green-400 text-2xl font-bold">₹</span>
                 </div>
               </div>
               
@@ -316,7 +353,7 @@ const Orders = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-400 text-sm">Average Order</p>
-                    <p className="text-2xl font-bold text-blue-400">${stats.averageOrderValue.toFixed(2)}</p>
+                    <p className="text-2xl font-bold text-blue-400">₹{stats.averageOrderValue.toLocaleString('en-IN')}</p>
                   </div>
                   <Package className="text-blue-400" size={24} />
                 </div>
@@ -326,9 +363,9 @@ const Orders = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-400 text-sm">Recent Orders</p>
-                    <p className="text-2xl font-bold text-purple-400">{stats.recentOrdersCount}</p>
+                    <p className="text-2xl font-bold text-white">{stats.recentOrdersCount}</p>
                   </div>
-                  <Calendar className="text-purple-400" size={24} />
+                  <Package className="text-gold-400" size={24} />
                 </div>
               </div>
             </div>
@@ -364,6 +401,23 @@ const Orders = () => {
                           <Calendar className="mr-1" size={14} />
                           {formatDate(order.date)}
                         </div>
+                        <div className="flex items-center text-sm mt-1">
+                          <Truck className="mr-1" size={14} />
+                          <span className="text-gray-400">Expected Delivery:</span>
+                          <span className={`ml-1 font-medium ${getDeliveryStatus(order.date).color}`}>
+                            {formatDeliveryDate(order.date)}
+                          </span>
+                          {getDeliveryStatus(order.date).status === 'today' && (
+                            <span className="ml-2 px-2 py-1 bg-yellow-500/20 text-yellow-400 text-xs rounded-full">
+                              Today!
+                            </span>
+                          )}
+                          {getDeliveryStatus(order.date).status === 'overdue' && (
+                            <span className="ml-2 px-2 py-1 bg-red-500/20 text-red-400 text-xs rounded-full">
+                              Overdue
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                     
@@ -373,7 +427,7 @@ const Orders = () => {
                         <span className="capitalize font-medium text-sm">{order.status}</span>
                       </div>
                       <div className="text-right">
-                        <p className="text-lg font-bold text-gold-400">${order.total.toFixed(2)}</p>
+                        <p className="text-lg font-bold text-gold-400">₹{order.total.toLocaleString('en-IN')}</p>
                         <p className="text-sm text-gray-400">{order.items.length} item{order.items.length > 1 ? 's' : ''}</p>
                       </div>
                     </div>
@@ -417,7 +471,7 @@ const Orders = () => {
                           </div>
                           <div className="flex-1 min-w-0">
                             <h4 className="font-medium text-white truncate">{item.name}</h4>
-                            <p className="text-sm text-gray-400">Qty: {item.quantity} • {item.price}</p>
+                            <p className="text-sm text-gray-400">Qty: {item.quantity} • ₹{item.price}</p>
                           </div>
                         </div>
                       ))}
@@ -482,6 +536,12 @@ const Orders = () => {
                   <div className="space-y-2 text-sm">
                     <p><span className="text-gray-400">Order ID:</span> <span className="text-white">{selectedOrder.id}</span></p>
                     <p><span className="text-gray-400">Date:</span> <span className="text-white">{formatDate(selectedOrder.date)}</span></p>
+                    <p className="flex items-center">
+                      <span className="text-gray-400 mr-2">Expected Delivery:</span>
+                      <span className={`font-medium ${getDeliveryStatus(selectedOrder.date).color}`}>
+                        {formatDeliveryDate(selectedOrder.date)}
+                      </span>
+                    </p>
                     <p className="flex items-center">
                       <span className="text-gray-400 mr-2">Status:</span> 
                       <span className={`flex items-center space-x-1 px-2 py-1 rounded-full border text-xs font-medium ${getStatusColor(selectedOrder.status)}`}>
@@ -551,12 +611,12 @@ const Orders = () => {
                         <p className="text-sm text-gray-400">Quantity: {item.quantity}</p>
                       </div>
                       <div className="text-right">
-                        <p className="font-semibold text-gold-400">{item.price}</p>
+                        <p className="font-semibold text-gold-400">₹{item.price}</p>
                         <p className="text-sm text-gray-400">Each</p>
                       </div>
                       <div className="text-right">
                         <p className="font-semibold text-white">
-                          ${(parseFloat(item.price.replace('$', '')) * item.quantity).toFixed(2)}
+                          ₹{(parseFloat(item.price.replace('₹', '')) * item.quantity).toLocaleString('en-IN')}
                         </p>
                         <p className="text-sm text-gray-400">Total</p>
                       </div>
@@ -571,18 +631,18 @@ const Orders = () => {
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span className="text-gray-400">Subtotal:</span>
-                    <span className="text-white">${selectedOrder.subtotal.toFixed(2)}</span>
+                    <span className="text-white">₹{selectedOrder.subtotal.toLocaleString('en-IN')}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">Shipping:</span>
                     <span className="text-white">
-                      {selectedOrder.shipping === 0 ? 'FREE' : `$${selectedOrder.shipping.toFixed(2)}`}
+                      {selectedOrder.shipping === 0 ? 'FREE' : `₹${selectedOrder.shipping.toLocaleString('en-IN')}`}
                     </span>
                   </div>
                   <div className="border-t border-gray-600 pt-2 mt-2">
                     <div className="flex justify-between text-lg font-semibold">
                       <span className="text-gold-400">Total:</span>
-                      <span className="text-gold-400">${selectedOrder.total.toFixed(2)}</span>
+                      <span className="text-gold-400">₹{selectedOrder.total.toLocaleString('en-IN')}</span>
                     </div>
                   </div>
                 </div>

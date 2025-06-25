@@ -117,7 +117,7 @@ export const CartDropdown = () => {
                   <div className="flex justify-between items-center mb-4">
                     <span className="text-white">Total:</span>
                     <span className="text-lg font-semibold text-gold-400">
-                      ${state.total.toFixed(2)}
+                      ₹{state.total.toFixed(0)}
                     </span>
                   </div>
                   <button

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Navigation } from '@/components/Navigation';
-import { Search, Filter, Eye, Download, Calendar, Package, User, DollarSign } from 'lucide-react';
+import { Search, Filter, Eye, Download, Calendar, Package, User, DollarSign, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useAdmin } from '@/contexts/AdminContext';
@@ -31,7 +31,9 @@ interface Order {
   shippingAddress?: any;
   billingAddress?: any;
   paymentMethod?: string;
-  stripePaymentIntentId?: string;
+  razorpayOrderId?: string;
+  razorpayPaymentId?: string;
+  razorpaySignature?: string;
 }
 
 interface AdminStats {
@@ -54,6 +56,8 @@ const UserOrders = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [orderToDelete, setOrderToDelete] = useState<Order | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const statuses = ['All', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
 
@@ -229,6 +233,80 @@ const UserOrders = () => {
     }
   };
 
+  const deleteOrder = async (orderId: string) => {
+    try {
+      console.log(`Admin attempting to delete order ${orderId}`);
+      
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('No authentication token found');
+        toast({
+          title: "Authentication Error",
+          description: "Please log in again to delete order",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      console.log('Sending DELETE request to delete order...');
+      const response = await fetch(createApiUrl(`api/orders/admin/delete/${orderId}`), {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      console.log('Response status:', response.status);
+      const data = await response.json();
+      console.log('Response data:', data);
+      
+      if (data.success) {
+        console.log(`Order ${orderId} successfully deleted from database`);
+        
+        // Remove the order from the local state
+        setOrders(prevOrders => prevOrders.filter(order => order.id !== orderId));
+        
+        // Close the delete confirmation modal
+        setShowDeleteConfirm(false);
+        setOrderToDelete(null);
+        
+        // Close order details modal if it was the deleted order
+        if (selectedOrder && selectedOrder.id === orderId) {
+          setSelectedOrder(null);
+        }
+        
+        toast({
+          title: "Order Deleted Successfully! ✅",
+          description: `Order #${orderId.slice(-8).toUpperCase()} has been permanently deleted.`,
+        });
+        
+        // Refresh stats after deletion
+        fetchStats();
+        
+        console.log('Order deletion process completed successfully');
+      } else {
+        console.error('Server responded with failure:', data);
+        toast({
+          title: "Error",
+          description: data.message || "Failed to delete order",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error deleting order:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete order. Please check your connection and try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeleteClick = (order: Order) => {
+    setOrderToDelete(order);
+    setShowDeleteConfirm(true);
+  };
+
   const filteredOrders = orders.filter(order => {
     const matchesSearch = searchQuery === '' || 
       order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -315,9 +393,9 @@ const UserOrders = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-400 text-sm">Total Revenue</p>
-                    <p className="text-2xl font-bold text-white">${stats.totalRevenue.toFixed(2)}</p>
+                    <p className="text-2xl font-bold text-green-400">₹{stats.totalRevenue.toLocaleString('en-IN')}</p>
                   </div>
-                  <DollarSign className="text-green-400" size={24} />
+                  <span className="text-green-400 text-2xl font-bold">₹</span>
                 </div>
               </div>
               <div className="bg-gray-900/50 border border-gold-600/20 rounded-lg p-6">
@@ -326,7 +404,7 @@ const UserOrders = () => {
                     <p className="text-gray-400 text-sm">Active Customers</p>
                     <p className="text-2xl font-bold text-white">{stats.activeCustomers}</p>
                   </div>
-                  <User className="text-blue-400" size={24} />
+                  <Package className="text-blue-400" size={24} />
                 </div>
               </div>
               <div className="bg-gray-900/50 border border-gold-600/20 rounded-lg p-6">
@@ -335,7 +413,7 @@ const UserOrders = () => {
                     <p className="text-gray-400 text-sm">This Month</p>
                     <p className="text-2xl font-bold text-white">{stats.thisMonthOrders}</p>
                   </div>
-                  <Calendar className="text-purple-400" size={24} />
+                  <Package className="text-gold-400" size={24} />
                 </div>
               </div>
             </div>
@@ -420,17 +498,24 @@ const UserOrders = () => {
                             {order.status}
                           </span>
                         </td>
-                        <td className="p-4 font-semibold text-white">
-                          ${order.total.toFixed(2)}
-                        </td>
+                        <td className="px-4 py-3 font-semibold text-gold-400 text-lg">₹{order.total.toLocaleString('en-IN')}</td>
                         <td className="p-4">
-                          <button
-                            onClick={() => setSelectedOrder(order)}
-                            className="flex items-center space-x-1 text-gold-400 hover:text-gold-300 transition-colors duration-200"
-                          >
-                            <Eye size={16} />
-                            <span>View</span>
-                          </button>
+                          <div className="flex items-center space-x-3">
+                            <button
+                              onClick={() => setSelectedOrder(order)}
+                              className="flex items-center space-x-1 text-gold-400 hover:text-gold-300 transition-colors duration-200"
+                            >
+                              <Eye size={16} />
+                              <span>View</span>
+                            </button>
+                            <button
+                              onClick={() => handleDeleteClick(order)}
+                              className="flex items-center space-x-1 text-red-400 hover:text-red-300 transition-colors duration-200"
+                            >
+                              <Trash2 size={16} />
+                              <span>Delete</span>
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -475,7 +560,7 @@ const UserOrders = () => {
                   <div className="space-y-2">
                     <p><span className="text-gray-400">Order Date:</span> <span className="text-white">{new Date(selectedOrder.date).toLocaleDateString()}</span></p>
                     <p><span className="text-gray-400">Status:</span> <span className={`px-2 py-1 rounded text-xs font-semibold ${getStatusColor(selectedOrder.status)}`}>{selectedOrder.status}</span></p>
-                    <p><span className="text-gray-400">Total:</span> <span className="text-white font-semibold">${selectedOrder.total.toFixed(2)}</span></p>
+                    <p><span className="text-gray-400">Total:</span> <span className="text-white font-semibold">₹{selectedOrder.total.toLocaleString('en-IN')}</span></p>
                     {selectedOrder.paymentStatus && <p><span className="text-gray-400">Payment:</span> <span className="text-green-400">{selectedOrder.paymentStatus}</span></p>}
                   </div>
                 </div>
@@ -572,7 +657,7 @@ const UserOrders = () => {
                           <p className="text-sm text-gray-400">Quantity: {item.quantity}</p>
                         </div>
                       </div>
-                      <p className="font-semibold text-white">${(parseFloat(item.price) * item.quantity).toFixed(2)}</p>
+                      <p className="font-semibold text-white">₹{(parseFloat(item.price) * item.quantity).toLocaleString('en-IN')}</p>
                     </div>
                   ))}
                 </div>
@@ -612,6 +697,80 @@ const UserOrders = () => {
                   className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors duration-200"
                 >
                   Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && orderToDelete && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-900 border border-red-500/20 rounded-lg max-w-md w-full">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-bold text-red-400">Delete Order</h2>
+                <button
+                  onClick={() => {
+                    setShowDeleteConfirm(false);
+                    setOrderToDelete(null);
+                  }}
+                  className="text-gray-400 hover:text-white transition-colors duration-200"
+                >
+                  ✕
+                </button>
+              </div>
+              
+              <div className="mb-6">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="bg-red-500/20 p-3 rounded-full">
+                    <Trash2 className="text-red-400" size={24} />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-white">Confirm Deletion</h3>
+                    <p className="text-gray-400 text-sm">This action cannot be undone</p>
+                  </div>
+                </div>
+                
+                <div className="bg-gray-800/50 p-4 rounded-lg">
+                  <p className="text-white font-medium mb-2">
+                    Order #{orderToDelete.id.slice(-8).toUpperCase()}
+                  </p>
+                  <p className="text-gray-400 text-sm mb-1">
+                    Customer: {orderToDelete.userName} ({orderToDelete.userEmail})
+                  </p>
+                  <p className="text-gray-400 text-sm mb-1">
+                    Date: {new Date(orderToDelete.date).toLocaleDateString()}
+                  </p>
+                  <p className="text-gray-400 text-sm">
+                    Total: ₹{orderToDelete.total.toLocaleString('en-IN')}
+                  </p>
+                </div>
+                
+                <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+                  <p className="text-red-400 text-sm">
+                    ⚠️ This will permanently delete the order and all associated data. 
+                    The customer will no longer see this order in their history.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={() => {
+                    setShowDeleteConfirm(false);
+                    setOrderToDelete(null);
+                  }}
+                  className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors duration-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => deleteOrder(orderToDelete.id)}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-500 transition-colors duration-200 font-semibold"
+                >
+                  Delete Order
                 </button>
               </div>
             </div>
