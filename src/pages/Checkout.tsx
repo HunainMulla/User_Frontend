@@ -126,7 +126,14 @@ const Checkout = () => {
         name: 'Golden Marquez',
         description: 'Luxury Perfumes',
         order_id: data.orderId,
-        // Add payment methods configuration
+        // Add payment methods configuration to enable UPI
+        method: {
+          netbanking: true,
+          card: true,
+          upi: true, // Enable UPI
+          wallet: true,
+          emi: true,
+        },
         config: {
           display: {
             blocks: {
@@ -145,9 +152,17 @@ const Checkout = () => {
                     method: "card"
                   }
                 ]
+              },
+              netbanking: {
+                name: "Pay using Net Banking",
+                instruments: [
+                  {
+                    method: "netbanking"
+                  }
+                ]
               }
             },
-            sequence: ["block.banks", "block.cards"],
+            sequence: ["block.banks", "block.cards", "block.netbanking"],
             preferences: {
               show_default_blocks: false
             }
