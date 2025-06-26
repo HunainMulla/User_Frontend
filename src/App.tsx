@@ -25,7 +25,10 @@ const queryClient = new QueryClient();
 
 const App = () => {
   useEffect(()=>{
-    window.scrollTo({top:0,behavior:'smooth'})
+    window.scrollTo({top:0,behavior:'smooth'});
+    // Ping server to wake it up
+    fetch(`${import.meta.env.VITE_API_URL || ''}/api/health`)
+      .catch(error => console.log('Server ping failed (this is normal on initial load):', error));
   },[])
 
   return(
